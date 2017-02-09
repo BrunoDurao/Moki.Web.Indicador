@@ -121,6 +121,9 @@ MokiIndicadoresApp.controller('IndicadorController', function IndicadorControlle
             paging: {
                 enabled: false
             },
+            selection: {
+                mode: "single"
+            },
             editing: {
                 mode: "row",
                 allowUpdating: true,
@@ -143,7 +146,7 @@ MokiIndicadoresApp.controller('IndicadorController', function IndicadorControlle
             masterDetail: {
                 enabled: true,
                 template: function (container, options) {
-                    var indicadorCorrente = options.data;
+                    var indicadorCorrente = options.data;   
                     container.addClass("internal-grid-container");
                     $("<div>").text("Tipos de Unidade:").appendTo(container);
                     $("<div>")
@@ -152,15 +155,16 @@ MokiIndicadoresApp.controller('IndicadorController', function IndicadorControlle
                             columnAutoWidth: true,
                             editing: {
                                 mode: "batch",
-                                allowUpdating: true
+                                allowUpdating: true,
+                            },
+                            onRowUpdating: function (e) {
+                                alert('internalSave');
                             },
                             columns: ["Nome", "Associado"],
-                            dataSource: indicadorCorrente.ListaUnidade
+                            dataSource: indicadorCorrente.ListaUnidade,
+                            id: "gridUnidade"
                         }).appendTo(container);
                 }
-            },
-            onContentReady : function (e) {
-                var a = $(".dx-link dx-link-cancel");
             },
             onEditingStart: function (e) {
                 e.component.expandRow(e.key);
@@ -181,14 +185,38 @@ MokiIndicadoresApp.controller('IndicadorController', function IndicadorControlle
             },
             onRowUpdating: function (e) {
                 atualizarIndicador(e);
+                var gridUnidade = $(".internal-grid").dxDataGrid("instance");
+                gridUnidade.saveEditData();
             },
             onRowUpdated: function (e) {
+                e.component.collapseAll(-1);
             },
-            onRowRemoving: function (e) {
+            onSelectionChanged: function (e) {
+                e.component.collapseAll(-1);
+                e.component.expandRow(e.currentSelectedRowKeys[0]);
             },
-            onRowRemoved: function (e) {
-            }
+            onCellPrepared: function (e) {
+                if (e.rowType == "data")
+                    switch (e.column.command) {
+                        case "select":
+                            // Selection column cells
+                            break;
+                        case "edit":
+                            if (e.cellElement[0].childNodes.length >= 3) {
+                                e.cellElement[0].childNodes[2].onclick = function() {Collapse()};
+                            }
+                            break;
+                        case "adaptive":
+                            // Adaptive column cells
+                            break;
+                    }
+            },
         };
+    }
+
+    function Collapse() {
+        var dataGrid = $('#gridContainer').dxDataGrid('instance');
+        dataGrid.collapseAll(-1);
     }
 
     function getDicionario(dicionario) {
