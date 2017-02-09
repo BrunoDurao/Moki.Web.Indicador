@@ -1,0 +1,183 @@
+﻿
+<!DOCTYPE html>
+<html >
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>MOKI Indicadores</title>
+    <link href="/Imagens/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+    <script src="/Scripts/jquery-3.1.1.min.js"></script>
+    <script src="/Scripts/Script.js"></script>
+    <script src="/Scripts/angular.min.js"></script>
+    <script src="Scripts/angular-resource.min.js"></script>
+    <script src="Scripts/angular-route.min.js"></script>
+    <script src="/Scripts/bootstrap.js"></script>
+    <script src="/Scripts/jszip.js"></script>
+    <script src="https://cdn3.devexpress.com/jslib/16.2.4/js/dx.all.js"></script>
+    <script src="/Scripts/INSPINIA/plugins/jquery.metisMenu.js"></script>
+    <script src="/Scripts/INSPINIA/plugins/jquery.slimscroll.min.js"></script>
+    <script src="/Scripts/INSPINIA/plugins/jquery.flot.js"></script>
+    <script src="/Scripts/INSPINIA/plugins/jquery.flot.tooltip.min.js"></script>
+    <script src="/Scripts/INSPINIA/plugins/jquery.flot.spline.js"></script>
+    <script src="/Scripts/INSPINIA/plugins/jquery.flot.resize.js"></script>
+    <script src="/Scripts/INSPINIA/plugins/jquery.flot.pie.js"></script>
+    <script src="/Scripts/INSPINIA/plugins/jquery.peity.min.js"></script>
+    <script src="/Scripts/INSPINIA/plugins/peity-demo.js"></script>
+    <script src="/Scripts/INSPINIA/inspinia.js"></script>
+    <script src="/Scripts/INSPINIA/plugins/jquery-ui.min.js"></script>
+    <script src="/Scripts/INSPINIA/plugins/jquery.gritter.min.js"></script>
+    <script src="/Scripts/INSPINIA/plugins/jquery.sparkline.min.js"></script>
+    <script src="/Scripts/INSPINIA/plugins/sparkline-demo.js"></script>
+    <script src="/Scripts/INSPINIA/plugins/Chart.min.js"></script>
+    <script src="/Scripts/INSPINIA/plugins/toastr.min.js"></script>
+    <script src="/Scripts/INSPINIA/plugins/bootstrap-datepicker.js"></script>
+    <script src="/Scripts/INSPINIA/plugins/select2.full.min.js"></script>
+    <script src="/Scripts/INSPINIA/plugins/icheck.min.js"></script>
+    <link href="/Content/bootstrap.css" rel="stylesheet">
+    <link href="/Content/dx.common.css" rel="stylesheet">
+    <link href="/Content/dx.light.compact.css" rel="stylesheet">
+    <link href="/Content/INSPINIA/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+    <link href="/Content/INSPINIA/plugin/toastr.min.css" rel="stylesheet">
+    <link href="/Content/INSPINIA/gritter/jquery.gritter.css" rel="stylesheet">
+    <link href="/Content/INSPINIA/datapicker/datepicker3.css" rel="stylesheet" />
+    <link href="/Content/INSPINIA/select2/select2.min.css" rel="stylesheet" />
+    <link href="/Content/INSPINIA/iCheck/custom.css" rel="stylesheet" />
+    <link href="/Content/INSPINIA/animate.css" rel="stylesheet">
+    <link href="/Content/INSPINIA/style.css" rel="stylesheet">
+    <style>
+        #btMenu {
+            background-color: #ffffff !important;
+            border-color: #959595 !important;
+            color: #FFFFFF !important;
+        }
+
+            #btMenu:hover {
+                background-color: #ffffff !important;
+                border-color: #959595 !important;
+                color: #FFFFFF !important;
+            }
+    </style>
+    <script src="/App/MokiIndicadoresApp.js"></script>
+    <script type="text/javascript" src='/App/controllers/IndicadorController.js'></script>
+    <script type="text/javascript" src='/App/controllers/CategoriaController.js'></script>
+</head>
+<body class="canvas-menu" ng-app="MokiIndicadoresApp">
+    <div id="wrapper">
+        <nav class="navbar-default navbar-static-side" role="navigation">
+            <div class="sidebar-collapse">
+                <a class="close-canvas-menu"><i class="fa fa-times"></i></a>
+                <ul class="nav metismenu" id="side-menu">
+                    <li class="nav-header">
+                        <div class="dropdown profile-element">
+                            <span>
+                                <img alt="image" class="img-circle" src="/Content/INSPINIA/img/profile_small.jpg" style="height:75px;" />
+                            </span>
+                            <a data-toggle="dropdown" class="dropdown-toggle" href="#">
+                                <span class="clear">
+                                    <span class="block m-t-xs">
+                                        <strong class="font-bold">Olá, "Sessão com nome"</strong>
+                                    </span> <span class="text-muted text-xs block">Sair <b class="caret"></b></span>
+                                </span>
+                            </a>
+                            <ul class="dropdown-menu animated fadeInRight m-t-xs">
+                                <li>Sair</li>
+                            </ul>
+                        </div>
+                        <div class="logo-element">
+                            <img alt="image" src="/Content/INSPINIA/img/logoMoki.png" style="height: 25px;" />
+                        </div>
+                    </li>
+                    <li>
+                        <a href="#home"><i class="fa fa-flag"></i> <span class="nav-label">Início</span></a>
+                    </li>
+                    <li>
+                        <a href="#"><i class="fa fa-gears"></i> <span class="nav-label">Administração</span> <span class="fa arrow"></span></a>
+                        <ul class="nav nav-second-level">
+                            <li> <a href="#indicadores">Indicadores</a></li>
+                        </ul>
+                        <ul class="nav nav-second-level">
+                            <li> <a href="#categorias">Categorias</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <div id="page-wrapper" class="gray-bg">
+            <div class="row border-bottom">
+                <nav class="navbar navbar-static-top white-bg" role="navigation" style="margin-bottom: 0">
+                    <div class="navbar-header">
+                        <a class="navbar-minimalize minimalize-styl-2 btn btn-primary " id="btMenu" href="#"><i class="fa fa-bars" style="color: gray;"></i> </a>
+                        <ul class="nav navbar-top-links navbar-left">
+                            <li>
+                                <span class="m-r-sm text-muted welcome-message">Bem vindo ao Moki Indicadores.</span>
+                            </li>
+                            <li>
+                                <a href="/Login/LogOff" class="btnLogoff">
+                                    <i class="fa fa-sign-out"></i> Sair
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <ul class="nav navbar-top-links navbar-right">
+                        <li><img src="" style="margin-top: 10%" /></li>
+                    </ul>
+                </nav>
+            </div>
+            <div class="wrapper wrapper-content">
+                <div ng-view></div>
+                <!--
+                Minha View tem q entrar aqui
+                -->
+            </div>
+            <div class="footer">
+                <div ng-controller="mainController">
+                    CallNet Serviços de Informática e Internet Ltda - <strong>Copyright</strong> &copy; 2007-{{dateYYYY}}.
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="modal-container" class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-content">
+        </div>
+    </div>
+    <script type="text/javascript">
+            $(function () {
+                // Initialize numeric spinner input boxes
+                //$(".numeric-spinner").spinedit();
+
+                // Initalize modal dialog
+                // attach modal-container bootstrap attributes to links with .modal-link class.
+                // when a link is clicked with these attributes, bootstrap will display the href content in a modal dialog.
+                $('body').on('click', '.modal-link', function (e) {
+                    e.preventDefault();
+                    $(this).attr('data-target', '#modal-container');
+                    $(this).attr('data-toggle', 'modal');
+                });
+
+                // Attach listener to .modal-close-btn's so that when the button is pressed the modal dialog disappears
+                $('body').on('click', '.modal-close-btn', function () {
+                    $('#modal-container').modal('hide');
+                });
+
+                //clear modal cache, so that new content can be loaded
+                $('#modal-container').on('hidden.bs.modal', function () {
+                    $(this).removeData('bs.modal');
+                });
+
+                $('#CancelModal').on('click', function () {
+                    return false;
+                });
+            });
+    </script>
+    <style>
+        .modal-content {
+            width: 800px !important;
+            height: 300px;
+            margin: 30px auto !important;
+        }
+    </style>
+</body>
+</html>

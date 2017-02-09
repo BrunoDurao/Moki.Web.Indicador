@@ -1,0 +1,6 @@
+c:\users\bruno\documents\visual studio 2013\Projects\Moki.Web.Indicador\Moki.Web.Indicador\bin\Moki.Web.Indicador.dll.config
+c:\users\bruno\documents\visual studio 2013\Projects\Moki.Web.Indicador\Moki.Web.Indicador\bin\Moki.Web.Indicador.dll
+c:\users\bruno\documents\visual studio 2013\Projects\Moki.Web.Indicador\Moki.Web.Indicador\bin\Moki.Web.Indicador.pdb
+c:\users\bruno\documents\visual studio 2013\Projects\Moki.Web.Indicador\Moki.Web.Indicador\obj\Debug\Moki.Web.Indicador.dll
+c:\users\bruno\documents\visual studio 2013\Projects\Moki.Web.Indicador\Moki.Web.Indicador\obj\Debug\Moki.Web.Indicador.pdb
+c:\users\bruno\documents\visual studio 2013\Projects\Moki.Web.Indicador\Moki.Web.Indicador\obj\Debug\Moki.Web.csprojResolveAssemblyReference.cache
