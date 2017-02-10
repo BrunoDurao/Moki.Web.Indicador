@@ -110,6 +110,7 @@ MokiIndicadoresApp.controller('IndicadorController', function IndicadorControlle
         listaVerbetes.push("idDirecao");
         listaVerbetes.push("Ordem");
         listaVerbetes.push("idTipoMedida");
+        listaVerbetes.push("Administração Indicadores");
 
         return listaVerbetes;
     }
@@ -119,7 +120,7 @@ MokiIndicadoresApp.controller('IndicadorController', function IndicadorControlle
         $scope.dataGridOptions = {
             dataSource: $scope.Listaindicador,
             paging: {
-                enabled: false
+                enabled: true
             },
             selection: {
                 mode: "single"
@@ -129,10 +130,14 @@ MokiIndicadoresApp.controller('IndicadorController', function IndicadorControlle
                 allowUpdating: true,
                 allowDeleting: false,
                 allowAdding: true,
-                AllowColumnReordering: true,
+                allowColumnReordering: true,
+                rowAlternationEnabled: true,
+                showBorders: true,
+                showRowLines: true,
+                columnAutoWidth: true,
             },
-            columns: [{ dataField: "Nome", caption: $scope.Dicionario["Nome"], width:"12%" },
-                    { dataField: "Descricao", caption: $scope.Dicionario["Descricao"], width: "20%" },
+            columns: [{ dataField: "Nome", caption: $scope.Dicionario["Nome"]},
+                    { dataField: "Descricao", caption: $scope.Dicionario["Descricao"] },
                     { dataField: "idCategoria", caption: $scope.Dicionario["idCategoria"], lookup: { dataSource: $scope.ListaCategoria, valueExpr: 'idCategoria', displayExpr: 'Nome' } },
                     { dataField: "idTipoFormato", caption: $scope.Dicionario["idTipoFormato"], lookup: { dataSource: $scope.ListaFormato, valueExpr: 'idTipoFormato', displayExpr: 'Nome' } },
                     { dataField: "idTipoFrequencia", caption: $scope.Dicionario["idTipoFrequencia"], lookup: { dataSource: $scope.ListaFrequencia, valueExpr: 'idTipoFrequencia', displayExpr: 'Nome' } },
@@ -140,7 +145,7 @@ MokiIndicadoresApp.controller('IndicadorController', function IndicadorControlle
                     { dataField: "Medida", caption: $scope.Dicionario["idTipoMedida"] },
                     { dataField: "dtInicio", caption: $scope.Dicionario["dtInicio"], format: "dd/MM/yyyy", dataType: "date" },
                     { dataField: "dtFim", caption: $scope.Dicionario["dtFim"], format: "dd/MM/yyyy", dataType: "date" },
-                    { dataField: "Ativo", caption: $scope.Dicionario["Ativo"], dateType: "boolean" },
+                    { dataField: "Ativo", caption: $scope.Dicionario["Ativo"], dateType: "boolean", allowSorting: false },
                     { dataField: "dtCriacao", format: "dd/MM/yyyy", dataType: "date" ,visible: false, sortIndex: 0, sortOrder: 'desc' }
             ],
             masterDetail: {
@@ -153,6 +158,10 @@ MokiIndicadoresApp.controller('IndicadorController', function IndicadorControlle
                         .addClass("internal-grid")
                         .dxDataGrid({
                             columnAutoWidth: true,
+                            showColumnLines: false,
+                            showRowLines: true,
+                            rowAlternationEnabled: true,
+                            showBorders: true,
                             editing: {
                                 mode: "batch",
                                 allowUpdating: true,
@@ -160,17 +169,25 @@ MokiIndicadoresApp.controller('IndicadorController', function IndicadorControlle
                             onRowUpdating: function (e) {
                                 alert('internalSave');
                             },
-                            columns: ["Nome", "Associado"],
+                            onContentReady: function (e) {
+                                e.component.element().find(".dx-datagrid-header-panel").hide();         
+                            },
+                        
+                            columns: [{ dataField: "Nome", allowEditing: false }, { dataField: "Associado", dataType: "boolean" }],
                             dataSource: indicadorCorrente.ListaUnidade,
                             id: "gridUnidade"
                         }).appendTo(container);
                 }
             },
             onEditingStart: function (e) {
+
                 e.component.expandRow(e.key);
+
             },
             onInitNewRow: function (e) {
+
                 e.data.Ativo = true;
+
             },
             onRowInserting: function (e) {
 
@@ -184,32 +201,39 @@ MokiIndicadoresApp.controller('IndicadorController', function IndicadorControlle
 
             },
             onRowUpdating: function (e) {
+
                 atualizarIndicador(e);
-                var gridUnidade = $(".internal-grid").dxDataGrid("instance");
-                gridUnidade.saveEditData();
+               
+
             },
             onRowUpdated: function (e) {
+
                 e.component.collapseAll(-1);
+
             },
             onSelectionChanged: function (e) {
+
                 e.component.collapseAll(-1);
                 e.component.expandRow(e.currentSelectedRowKeys[0]);
+
             },
-            onCellPrepared: function (e) {
-                if (e.rowType == "data")
-                    switch (e.column.command) {
-                        case "select":
-                            // Selection column cells
-                            break;
-                        case "edit":
-                            if (e.cellElement[0].childNodes.length >= 3) {
-                                e.cellElement[0].childNodes[2].onclick = function() {Collapse()};
-                            }
-                            break;
-                        case "adaptive":
-                            // Adaptive column cells
-                            break;
-                    }
+            onContentReady: function (e) {
+
+                var lnkCancel = $(".dx-link.dx-link-cancel");
+                if (lnkCancel.length == 1) {
+                    lnkCancel.click(function () {
+                        Collapse();
+                    });
+                }
+
+                var lnkSave = $(".dx-link.dx-link-save");
+                if (lnkSave.length == 1) {
+                    lnkSave.click(function () {
+                        var gridUnidade = $(".internal-grid").dxDataGrid("instance");
+                        gridUnidade.saveEditData();
+                        Collapse();
+                    });
+                }
             },
         };
     }
