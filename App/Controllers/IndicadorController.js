@@ -12,6 +12,7 @@ MokiIndicadoresApp.controller('IndicadorController', function IndicadorControlle
                $scope.ListaDirecao = response.data.ListaDirecao;
                $scope.ListaFormato = response.data.ListaFormato;
                $scope.Dicionario = getDicionario(response.data.Dicionario);
+               $scope.ListaUnidade = response.data.ListaUnidade;
                buildDataGrid();
            },
            function (response) {
@@ -69,6 +70,7 @@ MokiIndicadoresApp.controller('IndicadorController', function IndicadorControlle
                      evento.data.idKpi = response.data.Id;
                      evento.data.idPessoal = response.data.IdPessoal;
                      evento.data.dtCriacao = response.data.dtCriacao;
+                     evento.data.ListaUnidade = response.data.ListaUnidade;
 
                      pendencia.resolve();
 
@@ -136,11 +138,13 @@ MokiIndicadoresApp.controller('IndicadorController', function IndicadorControlle
                 showRowLines: true,
                 columnAutoWidth: true,
             },
+
             columns: [{ dataField: "Nome", caption: $scope.Dicionario["Nome"]},
                     { dataField: "Descricao", caption: $scope.Dicionario["Descricao"] },
                     { dataField: "idCategoria", caption: $scope.Dicionario["idCategoria"], lookup: { dataSource: $scope.ListaCategoria, valueExpr: 'idCategoria', displayExpr: 'Nome' } },
                     { dataField: "idTipoFormato", caption: $scope.Dicionario["idTipoFormato"], lookup: { dataSource: $scope.ListaFormato, valueExpr: 'idTipoFormato', displayExpr: 'Nome' } },
                     { dataField: "idTipoFrequencia", caption: $scope.Dicionario["idTipoFrequencia"], lookup: { dataSource: $scope.ListaFrequencia, valueExpr: 'idTipoFrequencia', displayExpr: 'Nome' } },
+                    //{ dataField: "idTipoFrequenciaMeta", caption: $scope.Dicionario["idTipoFrequenciaMeta"], lookup: { dataSource: $scope.ListaFrequencia, valueExpr: 'idTipoFrequencia', displayExpr: 'Nome' } },
                     { dataField: "idDirecao", caption: $scope.Dicionario["idDirecao"], lookup: { dataSource: $scope.ListaDirecao, valueExpr: 'idDirecao', displayExpr: 'Nome' } },
                     { dataField: "Medida", caption: $scope.Dicionario["idTipoMedida"] },
                     { dataField: "dtInicio", caption: $scope.Dicionario["dtInicio"], format: "dd/MM/yyyy", dataType: "date" },
@@ -153,27 +157,36 @@ MokiIndicadoresApp.controller('IndicadorController', function IndicadorControlle
                 template: function (container, options) {
                     var indicadorCorrente = options.data;   
                     container.addClass("internal-grid-container");
-                    $("<div>").text("Tipos de Unidade:").appendTo(container);
+                    $("<div>")
+                        .text("Tipos de Unidade:")
+                        .css("margin", "auto")
+                        .css("text-align", "center")
+                        .appendTo(container);
                     $("<div>")
                         .addClass("internal-grid")
+                        .css("margin", "auto")
                         .dxDataGrid({
                             columnAutoWidth: true,
                             showColumnLines: false,
                             showRowLines: true,
                             rowAlternationEnabled: true,
                             showBorders: true,
+                            width: "45%",
                             editing: {
                                 mode: "batch",
                                 allowUpdating: true,
+                            },
+                            selection: {
+                                mode: "none"
                             },
                             onRowUpdating: function (e) {
                                 alert('internalSave');
                             },
                             onContentReady: function (e) {
-                                e.component.element().find(".dx-datagrid-header-panel").hide();         
+                                e.component.element().find(".dx-datagrid-header-panel").hide();
                             },
                         
-                            columns: [{ dataField: "Nome", allowEditing: false }, { dataField: "Associado", dataType: "boolean" }],
+                            columns: [{ dataField: "Nome", allowEditing: false }, { dataField: "Associado", dataType: "boolean", allowEditing: false }],
                             dataSource: indicadorCorrente.ListaUnidade,
                             id: "gridUnidade"
                         }).appendTo(container);
@@ -182,11 +195,14 @@ MokiIndicadoresApp.controller('IndicadorController', function IndicadorControlle
             onEditingStart: function (e) {
 
                 e.component.expandRow(e.key);
+                var gridUnidade = $(".internal-grid").dxDataGrid("instance");
+                gridUnidade.columnOption("Associado", { allowEditing: true });
 
             },
             onInitNewRow: function (e) {
 
                 e.data.Ativo = true;
+                collapse();
 
             },
             onRowInserting: function (e) {
@@ -222,7 +238,7 @@ MokiIndicadoresApp.controller('IndicadorController', function IndicadorControlle
                 var lnkCancel = $(".dx-link.dx-link-cancel");
                 if (lnkCancel.length == 1) {
                     lnkCancel.click(function () {
-                        Collapse();
+                        collapse();
                     });
                 }
 
@@ -231,14 +247,14 @@ MokiIndicadoresApp.controller('IndicadorController', function IndicadorControlle
                     lnkSave.click(function () {
                         var gridUnidade = $(".internal-grid").dxDataGrid("instance");
                         gridUnidade.saveEditData();
-                        Collapse();
+                        collapse();
                     });
                 }
             },
         };
     }
 
-    function Collapse() {
+    function collapse() {
         var dataGrid = $('#gridContainer').dxDataGrid('instance');
         dataGrid.collapseAll(-1);
     }
