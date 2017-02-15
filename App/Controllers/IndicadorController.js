@@ -12,7 +12,7 @@ MokiIndicadoresApp.controller('IndicadorController', function IndicadorControlle
                $scope.ListaDirecao = response.data.ListaDirecao;
                $scope.ListaFormato = response.data.ListaFormato;
                $scope.Dicionario = getDicionario(response.data.Dicionario);
-               $scope.ListaUnidade = response.data.ListaUnidade;
+               createCategoriaStore();
                buildDataGrid();
            },
            function (response) {
@@ -67,10 +67,10 @@ MokiIndicadoresApp.controller('IndicadorController', function IndicadorControlle
 
                      DevExpress.ui.notify(response.data.Mensagens[0], "success", $scope.messageDelay);
 
-                     evento.data.idKpi = response.data.Id;
-                     evento.data.idPessoal = response.data.IdPessoal;
-                     evento.data.dtCriacao = response.data.dtCriacao;
-                     evento.data.ListaUnidade = response.data.ListaUnidade;
+                     evento.data.idKpi = response.data.Indicador.Id;
+                     evento.data.idPessoal = response.data.Indicador.IdPessoal;
+                     evento.data.dtCriacao = response.data.Indicador.dtCriacao;
+                     evento.data.ListaUnidade = response.data.Indicador.ListaUnidade;
 
                      pendencia.resolve();
 
@@ -89,7 +89,60 @@ MokiIndicadoresApp.controller('IndicadorController', function IndicadorControlle
         evento.cancel = pendencia.promise();
     }
 
+    var obterListaCategoria = function () {
+        var pendencia = $.Deferred();
+
+        var request = {};
+        $http.post($scope.apiHost + "indicador/obterlistacategoria", request)
+        .then(
+           function (response) {
+               $scope.ListaCategoria = response.data.ListaCategoria;
+               pendencia.resolve();
+           },
+           function (response) {
+               DevExpress.ui.notify("Sistema com erro favor contactar suporte", "error", 200);
+               pendencia.resolve();
+           }
+        );
+
+        pendencia.promise();
+    }
+
+    function createCategoriaStore() {
+        $scope.storeCategoria = new DevExpress.data.CustomStore({
+            load: function (loadOptions) {
+                return $scope.ListaCategoria;
+            },
+            byKey: function (key) {
+
+                if (key == "")
+                    return;
+
+                for (var i = 0; i < $scope.ListaCategoria.length; i++) {
+                    var categoria = $scope.ListaCategoria[i];
+                    if (categoria.idCategoria == key)
+                        return $scope.ListaCategoria[i];
+                }
+            }
+        });
+    }
+
+    $scope.showCategoriaPopup = function () {
+        $scope.visiblePopup = true;
+    };
+
+    var headerTemplate = function (header, info) {
+
+       // var click = '"javascript: angular.element(document.getElementById(' + "'yourControllerElementID'" + ')).scope().showCategoriaPopup()"';
+        //var htmlimg = '<img src="../../imagens/inicio.png" height="14" width="14" onclick=' + click + ' >';
+        //var htmlimg = '<img src="../../imagens/inicio.png" height="14" width="14">';
+
+        $('<div style="float: left; overflow: hidden;">').html(info.column.caption).appendTo(header);
+        $('<div  style="overflow: hidden; padding: 1px;">').html('<img id="imgPopupCategoria" src="../../imagens/inicio.png" height="14" width="14">').appendTo(header);
+    };
+  
     var init = function () {
+        $scope.visiblePopup = false;
         obterDadosIniciais();
     };
 
@@ -117,6 +170,25 @@ MokiIndicadoresApp.controller('IndicadorController', function IndicadorControlle
         return listaVerbetes;
     }
 
+    $scope.popupOptions = {
+        width: 400,
+        height: 400,
+        contentTemplate: "info",
+        showTitle: true,
+        title: "Categorias",
+        dragEnabled: false,
+        closeOnOutsideClick: true,
+        bindingOptions: {
+            visible: "visiblePopup",
+        },
+        onHidden: function (e) {
+            collapse();
+            obterListaCategoria();
+            var dataGrid = $('#gridContainer').dxDataGrid('instance');
+            dataGrid.expandRow($scope.editionKey);
+        },
+    };
+
     function buildDataGrid() {
 
         $scope.dataGridOptions = {
@@ -138,13 +210,11 @@ MokiIndicadoresApp.controller('IndicadorController', function IndicadorControlle
                 showRowLines: true,
                 columnAutoWidth: true,
             },
-
             columns: [{ dataField: "Nome", caption: $scope.Dicionario["Nome"]},
                     { dataField: "Descricao", caption: $scope.Dicionario["Descricao"] },
-                    { dataField: "idCategoria", caption: $scope.Dicionario["idCategoria"], lookup: { dataSource: $scope.ListaCategoria, valueExpr: 'idCategoria', displayExpr: 'Nome' } },
+                    { dataField: 'idCategoria', caption: $scope.Dicionario["idCategoria"], lookup: { displayExpr: 'Nome', valueExpr: 'idCategoria', dataSource: $scope.storeCategoria }, headerCellTemplate: headerTemplate },
                     { dataField: "idTipoFormato", caption: $scope.Dicionario["idTipoFormato"], lookup: { dataSource: $scope.ListaFormato, valueExpr: 'idTipoFormato', displayExpr: 'Nome' } },
                     { dataField: "idTipoFrequencia", caption: $scope.Dicionario["idTipoFrequencia"], lookup: { dataSource: $scope.ListaFrequencia, valueExpr: 'idTipoFrequencia', displayExpr: 'Nome' } },
-                    //{ dataField: "idTipoFrequenciaMeta", caption: $scope.Dicionario["idTipoFrequenciaMeta"], lookup: { dataSource: $scope.ListaFrequencia, valueExpr: 'idTipoFrequencia', displayExpr: 'Nome' } },
                     { dataField: "idDirecao", caption: $scope.Dicionario["idDirecao"], lookup: { dataSource: $scope.ListaDirecao, valueExpr: 'idDirecao', displayExpr: 'Nome' } },
                     { dataField: "Medida", caption: $scope.Dicionario["idTipoMedida"] },
                     { dataField: "dtInicio", caption: $scope.Dicionario["dtInicio"], format: "dd/MM/yyyy", dataType: "date" },
@@ -193,14 +263,14 @@ MokiIndicadoresApp.controller('IndicadorController', function IndicadorControlle
                 }
             },
             onEditingStart: function (e) {
-
+                $scope.editionKey = e.key;
                 e.component.expandRow(e.key);
                 var gridUnidade = $(".internal-grid").dxDataGrid("instance");
                 gridUnidade.columnOption("Associado", { allowEditing: true });
-
             },
             onInitNewRow: function (e) {
 
+                $scope.editionKey = e.key;
                 e.data.Ativo = true;
                 collapse();
 
@@ -246,9 +316,23 @@ MokiIndicadoresApp.controller('IndicadorController', function IndicadorControlle
                 if (lnkSave.length == 1) {
                     lnkSave.click(function () {
                         var gridUnidade = $(".internal-grid").dxDataGrid("instance");
-                        gridUnidade.saveEditData();
+                        if (gridUnidade != undefined) {
+                            gridUnidade.saveEditData();
+                        }
                         collapse();
                     });
+                }
+
+                var headerCategoria = $("#imgPopupCategoria");
+                if (headerCategoria.length == 1) {
+                    headerCategoria.click(function () {
+                        $scope.showCategoriaPopup();
+                    });
+                }
+            },
+            onContextMenuPreparing: function (e) {
+                if (e.column.dataField == 'idCategoria') {
+                    e.items.push({ text: "Administrar Categorias", onItemClick: function () { $scope.showCategoriaPopup(); } });
                 }
             },
         };

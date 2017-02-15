@@ -67,6 +67,7 @@
     <Content Include="Content\icons\dxiconsios.eot" />
     <Content Include="Content\icons\dxiconsios.ttf" />
     <Content Include="Content\icons\dxiconsios.woff" />
+    <Content Include="Imagens\inicio.png" />
     <Content Include="Scripts\angular-resource.min.js.map" />
     <Content Include="Scripts\angular-route.min.js.map" />
     <Content Include="Scripts\angular.min.js.map" />

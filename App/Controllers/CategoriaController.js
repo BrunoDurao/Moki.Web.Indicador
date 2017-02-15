@@ -18,50 +18,96 @@ MokiIndicadoresApp.controller('CategoriaController', function CategoriaControlle
         );
     }
 
-    var atualizarcategoria = function (data) {
+    var atualizarcategoria = function (evento) {
+
+        var pendencia = $.Deferred();
+
+        var data = {};
+        $.extend(data, evento.oldData, evento.newData);
+
         var request = {};
         request.Categoria = data;
+
         $http.put($scope.apiHost + "/indicador/alterarcategoria", request)
          .then(
              function (response) {
                  if (response.data.Valido) {
                      DevExpress.ui.notify(response.data.Mensagens[0], "success", $scope.messageDelay);
+                     pendencia.resolve();
                  } else {
                      DevExpress.ui.notify(response.data.Mensagens[0], "error", $scope.messageDelay);
+                     pendencia.resolve(true);
                  }
              },
              function (response) {
                  DevExpress.ui.notify(response.data.Mensagens[0], "error", $scope.messageDelay);
+                 pendencia.resolve(true);
              }
           );
+
+        evento.cancel = pendencia.promise();
+
     }
 
-    var incluirCategoria = function (data) {
+    var incluirCategoria = function (evento) {
+
+        var pendencia = $.Deferred();
+
         var request = {};
-        request.Categoria = data;
+        request.Categoria = evento.data;
+
         $http.post($scope.apiHost + "/indicador/incluircategoria", request)
          .then(
              function (response) {
-                 DevExpress.ui.notify(response.data.Mensagens[0], "success", $scope.messageDelay);
+                 if (response.data.Valido) {
+
+                     DevExpress.ui.notify(response.data.Mensagens[0], "success", $scope.messageDelay);
+                     evento.data.idCategoria = response.data.Categoria.idCategoria;
+                     pendencia.resolve();
+
+                 } else {
+
+                     DevExpress.ui.notify(response.data.Mensagens[0], "error", $scope.messageDelay);
+                     pendencia.resolve(true);
+                 }
              },
              function (response) {
                  DevExpress.ui.notify(response.data.Mensagens[0], "error", $scope.messageDelay);
+                 pendencia.resolve(true);
+
              }
           );
+
+        evento.cancel = pendencia.promise();
     }
 
-    var excluirCategoria = function (data) {    
+    var excluirCategoria = function (evento) {
+
+        var pendencia = $.Deferred();
+
         request = {};
-        request.idCategoria = data.idCategoria;
+        request.idCategoria = evento.data.idCategoria;
+
         $http.post($scope.apiHost + "/indicador/excluircategoria", request)
          .then(
              function (response) {
-                 DevExpress.ui.notify(response.data.Mensagens[0], "success", $scope.messageDelay);
+                 if (response.data.Valido) {
+                     DevExpress.ui.notify(response.data.Mensagens[0], "success", $scope.messageDelay);
+                     pendencia.resolve();
+                 } else {
+
+                     DevExpress.ui.notify(response.data.Mensagens[0], "error", $scope.messageDelay);
+                     pendencia.resolve(true);
+                 }
              },
              function (response) {
                  DevExpress.ui.notify(response.data.Mensagens[0], "error", $scope.messageDelay);
+                 pendencia.resolve(true);
              }
           );
+
+        evento.cancel = pendencia.promise();
+
     }
 
     var init = function () {
@@ -83,7 +129,7 @@ MokiIndicadoresApp.controller('CategoriaController', function CategoriaControlle
 
     function buildDataGrid() {
 
-        $scope.dataGridOptions = {
+        $scope.dataGridOptionsCategoria = {
             dataSource: $scope.ListaCategoria,
             paging: {
                 enabled: false
@@ -93,30 +139,35 @@ MokiIndicadoresApp.controller('CategoriaController', function CategoriaControlle
                 allowUpdating: true,
                 allowDeleting: true,
                 allowAdding: true,
-                AllowColumnReordering: true,
+                allowColumnReordering: true,
+                rowAlternationEnabled: true,
+                showBorders: true,
+                showRowLines: true,
+                columnAutoWidth: true,
             },
-            columns: [{ dataField: "Nome", caption: $scope.Dicionario["Nome"], width:"12%" }],
-                        //{ dataField: "Descricao", caption: $scope.Dicionario["Descricao"], width: "20%" },
-                        //{ dataField: "Ativo", caption: $scope.Dicionario["Ativo"] },
+            columns: [{ dataField: "Nome", caption: $scope.Dicionario["Nome"], width: "12%" },
+                     { dataField: "idCategoria", visible: false, sortIndex: 0, sortOrder: 'desc' }
+            ],
+
             onEditingStart: function (e) {
             },
             onInitNewRow: function (e) {
             },
             onRowInserting: function (e) {
-                incluirCategoria(e.data);
+                incluirCategoria(e);
             },
             onRowInserted: function (e) {
+                e.component.clearSorting();
+                e.component.columnOption('idCategoria', 'sortOrder', 'desc');
             },
             onRowUpdating: function (e) {
+                atualizarcategoria(e);
 
-                var data = {};
-                $.extend(data, e.oldData, e.newData);
-                atualizarcategoria(data);
             },
             onRowUpdated: function (e) {
             },
             onRowRemoving: function (e) {
-                excluirCategoria(e.data);
+                excluirCategoria(e);
             },
             onRowRemoved: function (e) {
             }
