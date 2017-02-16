@@ -28,7 +28,6 @@ MokiIndicadoresApp.controller('IndicadorController', function IndicadorControlle
         var data = {};
         $.extend(data, evento.oldData, evento.newData);
 
-        var ListaUnidadeBkp = data.ListaUnidade.slice(0, data.ListaUnidade.length);
         if ($scope.ListaUnidade.length > 0) {
             data.ListaUnidade = $scope.ListaUnidade.slice(0, $scope.ListaUnidade.length);
         }
@@ -46,7 +45,6 @@ MokiIndicadoresApp.controller('IndicadorController', function IndicadorControlle
 
                 } else {
                     DevExpress.ui.notify(response.data.Mensagens[0], "error", $scope.messageDelay);
-                    desfazAlteracaoListaUnidade(ListaUnidadeBkp.slice(0, ListaUnidadeBkp.length));
                     pendencia.resolve(true);
                 }
              },
@@ -114,12 +112,12 @@ MokiIndicadoresApp.controller('IndicadorController', function IndicadorControlle
         pendencia.promise();
     }
 
-    var desfazAlteracaoListaUnidade = function (listaUnidade) {
+    var desfazAlteracaoListaUnidade = function () {
         var gridUnidade = $(".internal-grid").dxDataGrid("instance");
         if (gridUnidade != undefined) {
-            gridUnidade.dataSource = listaUnidade;
-            gridUnidade.refresh();
+            gridUnidade.dataSource = $scope.editionKey.ListaUnidade.slice(0, $scope.editionKey.ListaUnidade.length);
             gridUnidade.columnOption("Associado", { allowEditing: true });
+            gridUnidade.refresh();
         }
     }
 
@@ -307,6 +305,7 @@ MokiIndicadoresApp.controller('IndicadorController', function IndicadorControlle
                 e.component.expandRow(e.key);
                 var gridUnidade = $(".internal-grid").dxDataGrid("instance");
                 gridUnidade.columnOption("Associado", { allowEditing: true });
+                
             },
             onInitNewRow: function (e) {
 
@@ -353,6 +352,7 @@ MokiIndicadoresApp.controller('IndicadorController', function IndicadorControlle
                 var lnkCancel = $(".dx-link.dx-link-cancel");
                 if (lnkCancel.length == 1) {
                     lnkCancel.click(function () {
+                        desfazAlteracaoListaUnidade();
                         collapse();
                         $scope.editionKey = null;
                     });
@@ -365,7 +365,6 @@ MokiIndicadoresApp.controller('IndicadorController', function IndicadorControlle
                         if (gridUnidade != undefined) {
                             save();
                         }
-                        //collapse();
                         $scope.editionKey = null;
                     });
                 }
