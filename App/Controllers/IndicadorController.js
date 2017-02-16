@@ -28,6 +28,11 @@ MokiIndicadoresApp.controller('IndicadorController', function IndicadorControlle
         var data = {};
         $.extend(data, evento.oldData, evento.newData);
 
+        var ListaUnidadeBkp = data.ListaUnidade.slice(0, data.ListaUnidade.length);
+        if ($scope.ListaUnidade.length > 0) {
+            data.ListaUnidade = $scope.ListaUnidade.slice(0, $scope.ListaUnidade.length);
+        }
+
         var request = {};
         request.indicador = data;
 
@@ -41,6 +46,7 @@ MokiIndicadoresApp.controller('IndicadorController', function IndicadorControlle
 
                 } else {
                     DevExpress.ui.notify(response.data.Mensagens[0], "error", $scope.messageDelay);
+                    desfazAlteracaoListaUnidade(ListaUnidadeBkp.slice(0, ListaUnidadeBkp.length));
                     pendencia.resolve(true);
                 }
              },
@@ -108,6 +114,15 @@ MokiIndicadoresApp.controller('IndicadorController', function IndicadorControlle
         pendencia.promise();
     }
 
+    var desfazAlteracaoListaUnidade = function (listaUnidade) {
+        var gridUnidade = $(".internal-grid").dxDataGrid("instance");
+        if (gridUnidade != undefined) {
+            gridUnidade.dataSource = listaUnidade;
+            gridUnidade.refresh();
+            gridUnidade.columnOption("Associado", { allowEditing: true });
+        }
+    }
+
     function createCategoriaStore() {
         $scope.storeCategoria = new DevExpress.data.CustomStore({
             load: function (loadOptions) {
@@ -127,21 +142,39 @@ MokiIndicadoresApp.controller('IndicadorController', function IndicadorControlle
         });
     }
 
+    var allowSorting = function (column, allow) {
+        var dataGrid = $('#gridContainer').dxDataGrid('instance');
+        dataGrid.columnOption(column, "allowSorting", allow);
+    }
+
     $scope.showCategoriaPopup = function () {
         $scope.visiblePopup = true;
     };
 
     var headerTemplate = function (header, info) {
 
-       // var click = '"javascript: angular.element(document.getElementById(' + "'yourControllerElementID'" + ')).scope().showCategoriaPopup()"';
-        //var htmlimg = '<img src="../../imagens/inicio.png" height="14" width="14" onclick=' + click + ' >';
-        //var htmlimg = '<img src="../../imagens/inicio.png" height="14" width="14">';
+        $('<a/>').addClass('dx-link')
+                    .text(info.column.caption)
+                    .on('dxclick', function () {
 
-        $('<div style="float: left; overflow: hidden;">').html(info.column.caption).appendTo(header);
-        $('<div  style="overflow: hidden; padding: 1px;">').html('<img id="imgPopupCategoria" src="../../imagens/inicio.png" height="14" width="14">').appendTo(header);
+                        $scope.showCategoriaPopup();
+
+                    })
+                    .on('mouseover', function () {
+
+                       allowSorting('idCategoria', false);
+
+                    })
+                    .on('mouseout', function () {
+
+                      allowSorting('idCategoria', true);
+
+                    })
+                    .appendTo(header);
     };
-  
+
     var init = function () {
+        $scope.ListaUnidade = [];
         $scope.visiblePopup = false;
         obterDadosIniciais();
     };
@@ -185,7 +218,9 @@ MokiIndicadoresApp.controller('IndicadorController', function IndicadorControlle
             collapse();
             obterListaCategoria();
             var dataGrid = $('#gridContainer').dxDataGrid('instance');
-            dataGrid.expandRow($scope.editionKey);
+            if ($scope.editionKey != null ) {
+                dataGrid.expandRow($scope.editionKey);
+            }
         },
     };
 
@@ -249,13 +284,17 @@ MokiIndicadoresApp.controller('IndicadorController', function IndicadorControlle
                             selection: {
                                 mode: "none"
                             },
+                            onEditingStart: function (e) {
+                                $scope.ListaUnidade = [];
+                            },
                             onRowUpdating: function (e) {
-                                alert('internalSave');
+                                var data = {};
+                                $.extend(data, e.oldData, e.newData);
+                                $scope.ListaUnidade.push(data);
                             },
                             onContentReady: function (e) {
                                 e.component.element().find(".dx-datagrid-header-panel").hide();
                             },
-                        
                             columns: [{ dataField: "Nome", allowEditing: false }, { dataField: "Associado", dataType: "boolean", allowEditing: false }],
                             dataSource: indicadorCorrente.ListaUnidade,
                             id: "gridUnidade"
@@ -263,6 +302,7 @@ MokiIndicadoresApp.controller('IndicadorController', function IndicadorControlle
                 }
             },
             onEditingStart: function (e) {
+                collapse();
                 $scope.editionKey = e.key;
                 e.component.expandRow(e.key);
                 var gridUnidade = $(".internal-grid").dxDataGrid("instance");
@@ -284,6 +324,7 @@ MokiIndicadoresApp.controller('IndicadorController', function IndicadorControlle
 
                 e.component.clearSorting();
                 e.component.columnOption('dtCriacao', 'sortOrder', 'desc');
+                $scope.editionKey = null;
 
             },
             onRowUpdating: function (e) {
@@ -295,7 +336,11 @@ MokiIndicadoresApp.controller('IndicadorController', function IndicadorControlle
             onRowUpdated: function (e) {
 
                 e.component.collapseAll(-1);
+                $scope.editionKey = null;
 
+            },
+            onRowExpanding: function (e) {
+                collapse();
             },
             onSelectionChanged: function (e) {
 
@@ -309,6 +354,7 @@ MokiIndicadoresApp.controller('IndicadorController', function IndicadorControlle
                 if (lnkCancel.length == 1) {
                     lnkCancel.click(function () {
                         collapse();
+                        $scope.editionKey = null;
                     });
                 }
 
@@ -317,18 +363,13 @@ MokiIndicadoresApp.controller('IndicadorController', function IndicadorControlle
                     lnkSave.click(function () {
                         var gridUnidade = $(".internal-grid").dxDataGrid("instance");
                         if (gridUnidade != undefined) {
-                            gridUnidade.saveEditData();
+                            save();
                         }
-                        collapse();
+                        //collapse();
+                        $scope.editionKey = null;
                     });
                 }
-
-                var headerCategoria = $("#imgPopupCategoria");
-                if (headerCategoria.length == 1) {
-                    headerCategoria.click(function () {
-                        $scope.showCategoriaPopup();
-                    });
-                }
+         
             },
             onContextMenuPreparing: function (e) {
                 if (e.column.dataField == 'idCategoria') {
@@ -336,6 +377,25 @@ MokiIndicadoresApp.controller('IndicadorController', function IndicadorControlle
                 }
             },
         };
+    }
+
+    var save = function () {
+
+        // Salva Tipos Unidade associados
+        var gridUnidade = $(".internal-grid").dxDataGrid("instance");
+        if (gridUnidade != undefined) {
+            gridUnidade.saveEditData();
+        }
+
+        // Se indicador não estiver modificado força atualização
+        var dataGrid = $('#gridContainer').dxDataGrid('instance');
+        if (dataGrid.hasEditData() == false) {
+            var evento = {};
+            evento.cancel = false;
+            evento.oldData = {};
+            evento.newData = $scope.editionKey;
+            atualizarIndicador(evento);
+        }
     }
 
     function collapse() {
