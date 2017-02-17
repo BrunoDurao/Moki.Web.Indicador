@@ -113,12 +113,16 @@ MokiIndicadoresApp.controller('IndicadorController', function IndicadorControlle
     }
 
     var desfazAlteracaoListaUnidade = function () {
-        var gridUnidade = $(".internal-grid").dxDataGrid("instance");
-        if (gridUnidade != undefined) {
-            gridUnidade.dataSource = $scope.editionKey.ListaUnidade.slice(0, $scope.editionKey.ListaUnidade.length);
-            gridUnidade.columnOption("Associado", { allowEditing: true });
-            gridUnidade.refresh();
+       
+        var dataGrid = $('.internal-grid').dxDataGrid('instance');
+        var items = dataGrid.getDataSource().items();
+        //items = $scope.editionKey.ListaUnidade.slice(0, $scope.editionKey.ListaUnidade.length);
+
+        for (var i = 0; i < $scope.editionKey.ListaUnidade.length; i++) {
+            items[i].Associado = $scope.editionKey.ListaUnidade[i].Associado;
         }
+
+        dataGrid.refresh();
     }
 
     function createCategoriaStore() {
@@ -153,21 +157,20 @@ MokiIndicadoresApp.controller('IndicadorController', function IndicadorControlle
 
         $('<a/>').addClass('dx-link')
                     .text(info.column.caption)
-                    .on('dxclick', function () {
-
+                    .on('dxclick', function (event) {
+                        event.stopPropagation();
                         $scope.showCategoriaPopup();
-
                     })
-                    .on('mouseover', function () {
+                    //.on('mouseover', function () {
 
-                       allowSorting('idCategoria', false);
+                    //   allowSorting('idCategoria', false);
 
-                    })
-                    .on('mouseout', function () {
+                    //})
+                    //.on('mouseout', function () {
 
-                      allowSorting('idCategoria', true);
+                    //  allowSorting('idCategoria', true);
 
-                    })
+                    //})
                     .appendTo(header);
     };
 
@@ -202,8 +205,8 @@ MokiIndicadoresApp.controller('IndicadorController', function IndicadorControlle
     }
 
     $scope.popupOptions = {
-        width: 400,
-        height: 400,
+        width: 200,
+        height: 500,
         contentTemplate: "info",
         showTitle: true,
         title: "Categorias",
@@ -213,12 +216,7 @@ MokiIndicadoresApp.controller('IndicadorController', function IndicadorControlle
             visible: "visiblePopup",
         },
         onHidden: function (e) {
-            collapse();
             obterListaCategoria();
-            var dataGrid = $('#gridContainer').dxDataGrid('instance');
-            if ($scope.editionKey != null ) {
-                dataGrid.expandRow($scope.editionKey);
-            }
         },
     };
 
@@ -252,7 +250,7 @@ MokiIndicadoresApp.controller('IndicadorController', function IndicadorControlle
                     { dataField: "Medida", caption: $scope.Dicionario["idTipoMedida"] },
                     { dataField: "dtInicio", caption: $scope.Dicionario["dtInicio"], format: "dd/MM/yyyy", dataType: "date" },
                     { dataField: "dtFim", caption: $scope.Dicionario["dtFim"], format: "dd/MM/yyyy", dataType: "date" },
-                    { dataField: "Ativo", caption: $scope.Dicionario["Ativo"], dateType: "boolean", allowSorting: false },
+                    { dataField: "Ativo", caption: $scope.Dicionario["Ativo"], dateType: "boolean"},
                     { dataField: "dtCriacao", format: "dd/MM/yyyy", dataType: "date" ,visible: false, sortIndex: 0, sortOrder: 'desc' }
             ],
             masterDetail: {
@@ -294,14 +292,24 @@ MokiIndicadoresApp.controller('IndicadorController', function IndicadorControlle
                                 e.component.element().find(".dx-datagrid-header-panel").hide();
                             },
                             columns: [{ dataField: "Nome", allowEditing: false }, { dataField: "Associado", dataType: "boolean", allowEditing: false }],
-                            dataSource: indicadorCorrente.ListaUnidade,
+                            //dataSource: indicadorCorrente.ListaUnidade,
+                            dataSource: {
+                                store: {
+                                    type: "array",
+                                    key: "IdAssociacao",
+                                    data: indicadorCorrente.ListaUnidade
+                                }
+                            },
                             id: "gridUnidade"
                         }).appendTo(container);
                 }
             },
             onEditingStart: function (e) {
+                e.element.find('.dx-datagrid-headers').toggleClass('dx-state-disabled', true);
+                e.element.find('.dx-datagrid-pager').toggleClass('dx-state-disabled', true);
                 collapse();
-                $scope.editionKey = e.key;
+                $scope.editionKey = {};
+                $scope.editionKey = $.extend(true, $scope.editionKey, e.key);
                 e.component.expandRow(e.key);
                 var gridUnidade = $(".internal-grid").dxDataGrid("instance");
                 gridUnidade.columnOption("Associado", { allowEditing: true });
@@ -309,7 +317,8 @@ MokiIndicadoresApp.controller('IndicadorController', function IndicadorControlle
             },
             onInitNewRow: function (e) {
 
-                $scope.editionKey = e.key;
+                $scope.editionKey = {};
+                $scope.editionKey = $.extend(true, $scope.editionKey, e.key);
                 e.data.Ativo = true;
                 collapse();
 
@@ -323,7 +332,6 @@ MokiIndicadoresApp.controller('IndicadorController', function IndicadorControlle
 
                 e.component.clearSorting();
                 e.component.columnOption('dtCriacao', 'sortOrder', 'desc');
-                $scope.editionKey = null;
 
             },
             onRowUpdating: function (e) {
@@ -335,7 +343,6 @@ MokiIndicadoresApp.controller('IndicadorController', function IndicadorControlle
             onRowUpdated: function (e) {
 
                 e.component.collapseAll(-1);
-                $scope.editionKey = null;
 
             },
             onRowExpanding: function (e) {
@@ -349,12 +356,14 @@ MokiIndicadoresApp.controller('IndicadorController', function IndicadorControlle
             },
             onContentReady: function (e) {
 
+                e.element.find('.dx-datagrid-headers').toggleClass('dx-state-disabled', e.component.hasEditData());
+                e.element.find('.dx-datagrid-pager').toggleClass('dx-state-disabled', e.component.hasEditData());
+
                 var lnkCancel = $(".dx-link.dx-link-cancel");
                 if (lnkCancel.length == 1) {
                     lnkCancel.click(function () {
                         desfazAlteracaoListaUnidade();
                         collapse();
-                        $scope.editionKey = null;
                     });
                 }
 
@@ -365,7 +374,6 @@ MokiIndicadoresApp.controller('IndicadorController', function IndicadorControlle
                         if (gridUnidade != undefined) {
                             save();
                         }
-                        $scope.editionKey = null;
                     });
                 }
          

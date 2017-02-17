@@ -132,12 +132,13 @@ MokiIndicadoresApp.controller('CategoriaController', function CategoriaControlle
         $scope.dataGridOptionsCategoria = {
             dataSource: $scope.ListaCategoria,
             paging: {
-                enabled: false
+                enabled: true,
+                pageSize: 10
             },
             editing: {
                 mode: "row",
-                allowUpdating: true,
-                allowDeleting: true,
+                allowUpdating: false,
+                allowDeleting: false,
                 allowAdding: true,
                 allowColumnReordering: true,
                 rowAlternationEnabled: true,
@@ -172,6 +173,13 @@ MokiIndicadoresApp.controller('CategoriaController', function CategoriaControlle
             onRowRemoved: function (e) {
             }
         };
+
+        if ($('#gridContainerCategoria').parent().attr('id') == 'admcategoria-container') {
+            $scope.dataGridOptionsCategoria.editing.allowUpdating = true;
+            $scope.dataGridOptionsCategoria.editing.allowDeleting = true;
+
+        }
+        
     }
 
     function getDicionario(dicionario) {
