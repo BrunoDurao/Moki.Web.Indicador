@@ -28,7 +28,7 @@ MokiIndicadoresApp.controller('CategoriaController', function CategoriaControlle
         var request = {};
         request.Categoria = data;
 
-        $http.put($scope.apiHost + "/indicador/alterarcategoria", request)
+        $http.post($scope.apiHost + "indicador/alterarcategoria", request)
          .then(
              function (response) {
                  if (response.data.Valido) {
@@ -133,7 +133,7 @@ MokiIndicadoresApp.controller('CategoriaController', function CategoriaControlle
             dataSource: $scope.ListaCategoria,
             paging: {
                 enabled: true,
-                pageSize: 10
+                pageSize: 20
             },
             editing: {
                 mode: "row",

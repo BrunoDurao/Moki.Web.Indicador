@@ -3,11 +3,13 @@
 <div class="demo-container">
     <div id="Popup">
         <div id="gridContainer" dx-data-grid="dataGridOptions"></div>
-        <div class="popup" dx-popup="popupOptions">
+        <div id="ppCategoria"class="popup" dx-popup="popupOptions">
             <div data-options="dxTemplate: { name:'info' }">
-                <h3>Administração Categorias</h3>
-                <div id="popcategoria-container" ng-controller="CategoriaController">
-                    <div id="gridContainerCategoria" dx-data-grid="dataGridOptionsCategoria"></div>
+                <div id="popcategoria-container" >
+                    <div style="width: 100%; overflow: hidden;">
+                        <div dx-text-box="textBox.tbCategoria" style="float: left;"></div>
+                        <div dx-button="okButtonOptions" ></div>
+                    </div>
                 </div>
             </div>
         </div>

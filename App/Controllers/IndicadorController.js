@@ -71,8 +71,8 @@ MokiIndicadoresApp.controller('IndicadorController', function IndicadorControlle
 
                      DevExpress.ui.notify(response.data.Mensagens[0], "success", $scope.messageDelay);
 
-                     evento.data.idKpi = response.data.Indicador.Id;
-                     evento.data.idPessoal = response.data.Indicador.IdPessoal;
+                     evento.data.idKpi = response.data.Indicador.idKpi;
+                     evento.data.idPessoal = response.data.Indicador.idPessoal;
                      evento.data.dtCriacao = response.data.Indicador.dtCriacao;
                      evento.data.ListaUnidade = response.data.Indicador.ListaUnidade;
 
@@ -115,14 +115,15 @@ MokiIndicadoresApp.controller('IndicadorController', function IndicadorControlle
     var desfazAlteracaoListaUnidade = function () {
        
         var dataGrid = $('.internal-grid').dxDataGrid('instance');
-        var items = dataGrid.getDataSource().items();
-        //items = $scope.editionKey.ListaUnidade.slice(0, $scope.editionKey.ListaUnidade.length);
+        if (dataGrid.length == 1) {
 
-        for (var i = 0; i < $scope.editionKey.ListaUnidade.length; i++) {
-            items[i].Associado = $scope.editionKey.ListaUnidade[i].Associado;
+            var items = dataGrid.getDataSource().items();
+            for (var i = 0; i < $scope.editionKey.ListaUnidade.length; i++) {
+                items[i].Associado = $scope.editionKey.ListaUnidade[i].Associado;
+            }
+
+            dataGrid.refresh();
         }
-
-        dataGrid.refresh();
     }
 
     function createCategoriaStore() {
@@ -153,24 +154,59 @@ MokiIndicadoresApp.controller('IndicadorController', function IndicadorControlle
         $scope.visiblePopup = true;
     };
 
+    $scope.tbCategoriaValue;
+    $scope.textBox = { tbCategoria: { value: "", placeholder: "Entre com a categoria ...", showClearButton: true, bindingOptions: { value: 'tbCategoriaValue' } } };
+
+
+    $scope.okButtonOptions = {
+        text: 'Adicionar', type: 'normal', onClick: function (e) {
+            var categoria = {};
+            categoria.idCategoria = 0;
+            categoria.Nome = $scope.tbCategoriaValue;
+            incluirCategoria(categoria);
+        }
+    };
+
+    var incluirCategoria = function (categoria) {
+
+        var pendencia = $.Deferred();
+
+        var request = {};
+        request.Categoria = categoria;
+
+        $http.post($scope.apiHost + "/indicador/incluircategoria", request)
+         .then(
+             function (response) {
+                 if (response.data.Valido) {
+
+                     DevExpress.ui.notify(response.data.Mensagens[0], "success", $scope.messageDelay);
+                     $("#ppCategoria").dxPopup("instance").hide();
+                     pendencia.resolve();
+
+                 } else {
+
+                     DevExpress.ui.notify(response.data.Mensagens[0], "error", $scope.messageDelay);
+                     pendencia.resolve(true);
+                 }
+             },
+             function (response) {
+                 DevExpress.ui.notify(response.data.Mensagens[0], "error", $scope.messageDelay);
+                 pendencia.resolve(true);
+
+             }
+          );
+
+        pendencia.promise();
+    }
+
     var headerTemplate = function (header, info) {
 
         $('<a/>').addClass('dx-link')
                     .text(info.column.caption)
                     .on('dxclick', function (event) {
-                        event.stopPropagation();
                         $scope.showCategoriaPopup();
+                        event.stopImmediatePropagation();
                     })
-                    //.on('mouseover', function () {
-
-                    //   allowSorting('idCategoria', false);
-
-                    //})
-                    //.on('mouseout', function () {
-
-                    //  allowSorting('idCategoria', true);
-
-                    //})
                     .appendTo(header);
     };
 
@@ -205,11 +241,11 @@ MokiIndicadoresApp.controller('IndicadorController', function IndicadorControlle
     }
 
     $scope.popupOptions = {
-        width: 200,
-        height: 500,
+        width: 300,
+        height: 100,
         contentTemplate: "info",
         showTitle: true,
-        title: "Categorias",
+        title: "Adicionar Categoria",
         dragEnabled: false,
         closeOnOutsideClick: true,
         bindingOptions: {
@@ -217,6 +253,12 @@ MokiIndicadoresApp.controller('IndicadorController', function IndicadorControlle
         },
         onHidden: function (e) {
             obterListaCategoria();
+            $scope.tbCategoriaValue = "";
+            var inputZero = $('.dx-texteditor-input[tabindex="0"]');
+            if (inputZero.length > 0)
+            {
+                inputZero[3].focus();
+            }
         },
     };
 
@@ -230,16 +272,16 @@ MokiIndicadoresApp.controller('IndicadorController', function IndicadorControlle
             selection: {
                 mode: "single"
             },
+            rowAlternationEnabled: true,
+            allowColumnReordering: true,
+            showBorders: true,
+            showRowLines: true,
+            columnAutoWidth: true,
             editing: {
                 mode: "row",
                 allowUpdating: true,
                 allowDeleting: false,
                 allowAdding: true,
-                allowColumnReordering: true,
-                rowAlternationEnabled: true,
-                showBorders: true,
-                showRowLines: true,
-                columnAutoWidth: true,
             },
             columns: [{ dataField: "Nome", caption: $scope.Dicionario["Nome"]},
                     { dataField: "Descricao", caption: $scope.Dicionario["Descricao"] },
