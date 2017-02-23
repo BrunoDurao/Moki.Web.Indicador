@@ -1,26 +1,56 @@
 MokiIndicadoresApp.controller('LancamentoValoresController', function LancamentoValoresController($scope, $http) {
 
     var obterDadosIniciais = function () {
-        $scope.dados.push({id: 1, unidade: 'Ipanema', ano: 2000, valor: 500.00 });
-        $scope.dados.push({id: 2, unidade: 'Ipanema', ano: 2001, valor: 600.00 });
-        $scope.dados.push({id: 3, unidade: 'Ipanema', ano: 2002, valor: 700.00 });
-        $scope.dados.push({id: 4, unidade: 'Ipanema', ano: 2003, valor: 800.00 });
-        $scope.dados.push({id: 5, unidade: 'Ipanema', ano: 2004, valor: 900.00 });
-        $scope.dados.push({id: 6, unidade: 'Barra', ano: 2000, valor: 550.00 });
-        $scope.dados.push({id: 7, unidade: 'Barra', ano: 2001, valor: 650.00 });
-        $scope.dados.push({id: 8, unidade: 'Barra', ano: 2002, valor: 750.00 });
-        $scope.dados.push({id: 9, unidade: 'Barra', ano: 2003, valor: 850.00 });
-        $scope.dados.push({id: 10, unidade: 'Barra', ano: 2004, valor: 950.00 });
+        var request = {};
+        request.verbetes = {}; //ObterListaVerbetes();
+        $http.post($scope.apiHost + "indicador/obterlistaindicador", request)
+        .then(
+           function (response) {
+               $scope.Listaindicador = response.data.Indicadores;
+               //$scope.ListaCategoria = response.data.ListaCategoria;
+               $scope.ListaFrequencia = response.data.ListaFrequencia;
+               //$scope.ListaDirecao = response.data.ListaDirecao;
+               //$scope.ListaFormato = response.data.ListaFormato;
+               //$scope.Dicionario = getDicionario(response.data.Dicionario);
+               setLookupIndicadores();
+               setEscolhaFrequencia();
+           },
+           function (response) {
+               DevExpress.ui.notify("Sistema com erro favor contactar suporte", "error", 200);
+           }
+        );
+    };
+
+    var init = function () {
+        $scope.medida = 'kWh';
+        $scope.dados = [];
+        $scope.alterados = [];
+        $scope.Listaindicador = [];
+        obterDadosIniciais();
+  
+    };
+
+    var obterValores = function () {
+        $scope.dados.push({ id: 1, unidade: 'Ipanema', ano: 2000, valor: 500.00 });
+        $scope.dados.push({ id: 2, unidade: 'Ipanema', ano: 2001, valor: 600.00 });
+        $scope.dados.push({ id: 3, unidade: 'Ipanema', ano: 2002, valor: 700.00 });
+        $scope.dados.push({ id: 4, unidade: 'Ipanema', ano: 2003, valor: 800.00 });
+        $scope.dados.push({ id: 5, unidade: 'Ipanema', ano: 2004, valor: 900.00 });
+        $scope.dados.push({ id: 6, unidade: 'Barra', ano: 2000, valor: 550.00 });
+        $scope.dados.push({ id: 7, unidade: 'Barra', ano: 2001, valor: 650.00 });
+        $scope.dados.push({ id: 8, unidade: 'Barra', ano: 2002, valor: 750.00 });
+        $scope.dados.push({ id: 9, unidade: 'Barra', ano: 2003, valor: 850.00 });
+        $scope.dados.push({ id: 10, unidade: 'Barra', ano: 2004, valor: 950.00 });
         $scope.dados.push({ id: 11, unidade: 'Botafogo', ano: 2000, valor: 590.00 });
         $scope.dados.push({ id: 12, unidade: 'Botafogo', ano: 2001, valor: 690.00 });
         $scope.dados.push({ id: 13, unidade: 'Botafogo', ano: 2002, valor: 790.00 });
         $scope.dados.push({ id: 14, unidade: 'Botafogo', ano: 2003, valor: 890.00 });
         $scope.dados.push({ id: 15, unidade: 'Botafogo', ano: 2004, valor: 990.00 });
-        $scope.dados.push({ id: 16, unidade: 'Bangu', ano: 2000, valor: 580.00 });
-        $scope.dados.push({ id: 17, unidade: 'Bangu', ano: 2001, valor: 680.00 });
-        $scope.dados.push({ id: 18, unidade: 'Bangu', ano: 2002, valor: 780.00 });
-        $scope.dados.push({ id: 19, unidade: 'Bangu', ano: 2003, valor: 880.00 });
-        $scope.dados.push({ id: 20, unidade: 'Bangu', ano: 2004, valor: 980.00 });
+        $scope.dados.push({ id: 16, unidade: 'Bangu', ano: 2000, valor: 0 });
+        $scope.dados.push({ id: 17, unidade: 'Bangu', ano: 2001, valor: 0 });
+        $scope.dados.push({ id: 18, unidade: 'Bangu', ano: 2002, valor: 0 });
+        $scope.dados.push({ id: 19, unidade: 'Bangu', ano: 2003, valor: 0 });
+        $scope.dados.push({ id: 20, unidade: 'Bangu', ano: 2004, valor: 0 });
         $scope.dados.push({ id: 21, unidade: 'Santa Cruz', ano: 2000, valor: 560.00 });
         $scope.dados.push({ id: 22, unidade: 'Santa Cruz', ano: 2001, valor: 660.00 });
         $scope.dados.push({ id: 23, unidade: 'Santa Cruz', ano: 2002, valor: 760.00 });
@@ -79,7 +109,7 @@ MokiIndicadoresApp.controller('LancamentoValoresController', function Lancamento
         while (x < dados.length) {
             transformado[i] = {};
             transformado[i].unidade = dados[x].unidade;
-            
+
             while (transformado[i].unidade == dados[x].unidade) {
                 transformado[i][dados[x].ano] = dados[x].valor;
                 x++;
@@ -87,23 +117,34 @@ MokiIndicadoresApp.controller('LancamentoValoresController', function Lancamento
                 if (x >= dados.length)
                     break;
             }
-            
+
             i++;
         }
 
         return transformado;
     }
 
-    var montarColunas =  function () {
-    
+    var montarColunas = function () {
+
         $scope.colunas = [];
 
         for (var property in $scope.dadosgrid[0]) {
             if ($scope.dadosgrid[0].hasOwnProperty(property)) {
-                var coluna = {};    
+                var coluna = {};
                 coluna.dataField = property;
                 if (property != 'unidade') {
-                    coluna.format = 'currency';
+                    coluna.format = 'decimal fixedPoint';
+                    coluna.precision = '2';
+                    coluna.customizeText = function (options) {
+                        if (options.value !== 0) {
+                            if ($scope.medida == 'R$') {
+                                return 'R$ ' + options.valueText;
+                            } else {
+                                return options.valueText + ' ' + $scope.medida;
+                            }
+                        }
+                    };
+
                     $scope.colunas.push(coluna);
                 } else {
                     coluna.allowEditing = false;
@@ -113,21 +154,119 @@ MokiIndicadoresApp.controller('LancamentoValoresController', function Lancamento
         }
     };
 
-    var init = function () {
-        $scope.dados = [];
-        $scope.alterados = [];
-        obterDadosIniciais();
-        montarColunas();
-        buildDataGrid()
+    $scope.ListaUnidade = [{ idCliente: 1, NomeFantasia: 'Ipanema' },
+                            { idCliente: 2, NomeFantasia: 'Barra' },
+                            { idCliente: 3, NomeFantasia: 'Botafogo' },
+                            { idCliente: 4, NomeFantasia: 'Bangu' },
+                            { idCliente: 5, NomeFantasia: 'Santa Cruz' },
+                            { idCliente: 6, NomeFantasia: 'Centro' },
+                            { idCliente: 7, NomeFantasia: 'Leblon' },
+                            { idCliente: 8, NomeFantasia: 'Copacabana' },
+                            { idCliente: 9, NomeFantasia: 'Recreio' },
+                            { idCliente: 10, NomeFantasia: 'Campo Grande' },
+                            { idCliente: 11, NomeFantasia: 'Tijuca' }];
+
+    $scope.escolhaVisao = {
+        items: ['Indicador', 'Unidade'],
+        value: 'Indicador',
+        layout: "horizontal",
+        onOptionChanged: function (e) {
+            if (e.value == 'Indicador') {
+                $('#lkIndicadores').show();
+                $('#lkUnidades').hide();
+                $('#lkUnidades').dxLookup('instance').option('value', undefined);
+            } else {
+                $('#lkIndicadores').hide();
+                $('#lkIndicadores').dxLookup('instance').option('value',undefined);
+                $('#lkUnidades').show();
+                $('#rgFrequencia').dxRadioGroup('instance').option('disabled', false);
+            }
+        },
     };
-      
+
+    function setLookupIndicadores() {
+        $scope.LookupIndicadores = {
+            displayExpr: 'Nome',
+            valueExpr: 'idKpi',
+            //dataSource: $scope.Listaindicador,
+            dataSource: new DevExpress.data.DataSource({
+                store: $scope.Listaindicador,
+                //key: "ID", 
+                group: "idCategoria"
+            }),
+            showPopupTitle: false,
+            grouped: true,
+            onOptionChanged: function (e) {
+
+                var tipo = typeof e.value;
+
+                if (tipo == 'object' && e.value != null) {
+
+                    $scope.escolhaFrequenciaValue = e.value.idTipoFrequencia;
+                    $scope.medida = e.value.Medida;
+                    $('#rgFrequencia').dxRadioGroup('instance').option('disabled', true);
+                    $('#tbArgumento :input').focus();
+                }
+            }
+        };
+    }
+
+    $scope.LookupUnidades = {
+        displayExpr: 'NomeFantasia',
+        valueExpr: 'idCliente',
+        dataSource: $scope.ListaUnidade,
+        showPopupTitle: false,
+    };
+
+    function setEscolhaFrequencia() {
+        $scope.escolhaFrequenciaValue = null;
+        $scope.escolhafrequencia = {
+            dataSource: $scope.ListaFrequencia,
+            displayExpr: 'Nome',
+            valueExpr: 'idTipoFrequencia',
+            layout: "horizontal",
+            onOptionChanged: function (e) {
+
+                var tbArgumento = $('#tbArgumento').dxTextBox('instance');
+
+                switch (e.value) {
+                    case 4:
+                        tbArgumento.option('placeholder', 'Entre com o ano ...');
+                        break;
+                    case 3:
+                        tbArgumento.option('placeholder', 'Entre com o mes ...');
+                        break;
+                    case 2:
+                        tbArgumento.option('placeholder', 'Entre com a semana ...');
+                        break;
+                    case 1:
+                        tbArgumento.option('placeholder', 'Entre com a data ...');
+                        break;
+                }
+
+
+            },
+            bindingOptions: { value: 'escolhaFrequenciaValue' }
+        };
+
+    }
+    $scope.tbArgumento = { maskChar: '', value: "", placeholder: "", showClearButton: true, bindingOptions: { value: 'tbCategoriaValue' } };
+
+    $scope.okButtonOptions = {
+        text: 'Buscar', type: 'normal', onClick: function (e) {
+            obterValores();
+            montarColunas();
+            buildDataGrid();
+        }
+    }
+
     function buildDataGrid() {
 
         $scope.dataGridOptionsValores = {
             dataSource: $scope.dadosgrid,
+            noDataText: "dasdasdasdasd",
             paging: {
-                enabled: true,
-                pageSize: 20
+                enabled: false,
             },
             rowAlternationEnabled: true,
             allowColumnReordering: true,
@@ -140,7 +279,7 @@ MokiIndicadoresApp.controller('LancamentoValoresController', function Lancamento
                 allowDeleting: false,
                 allowAdding: false,
             },
-            columns:  $scope.colunas,
+            columns: $scope.colunas,
             onEditingStart: function (e) {
 
             },
@@ -159,14 +298,14 @@ MokiIndicadoresApp.controller('LancamentoValoresController', function Lancamento
                     save();
                     $scope.alterados = [];
                 }
-            }
+            },
         };
 
-        
+
     }
 
     var save = function () {
-        
+
         var salvar = [];
 
         for (var i = 0; i < $scope.alterados.length; i++) {
@@ -192,10 +331,11 @@ MokiIndicadoresApp.controller('LancamentoValoresController', function Lancamento
 
             salvar.push(kpivalor);
         }
-        
+
         console.log(salvar)
-      
+
     };
 
     init();
+   
 });

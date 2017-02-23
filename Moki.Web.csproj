@@ -72,6 +72,7 @@
     <Content Include="Scripts\angular-resource.min.js.map" />
     <Content Include="Scripts\angular-route.min.js.map" />
     <Content Include="Scripts\angular.min.js.map" />
+    <Content Include="Scripts\globalize.min.js" />
     <Content Include="Scripts\jquery-3.1.1.min.map" />
     <Content Include="Scripts\jquery-3.1.1.slim.min.map" />
     <None Include="Web.Debug.config">
@@ -146,6 +147,10 @@
     <Content Include="Content\Inspinia\touchspin\jquery.bootstrap-touchspin.min.css" />
     <Content Include="index.html" />
     <Content Include="Scripts\jquery-3.1.0.min.js" />
+    <Content Include="Scripts\localization\dx.all.de.js" />
+    <Content Include="Scripts\localization\dx.all.ja.js" />
+    <Content Include="Scripts\localization\dx.all.ru.js" />
+    <Content Include="Scripts\localization\dx.web.pt.js" />
     <Content Include="views\home.html" />
     <Content Include="views\Indicadores\LancamentoValores.html" />
     <Content Include="views\Indicadores\Categorias.html" />

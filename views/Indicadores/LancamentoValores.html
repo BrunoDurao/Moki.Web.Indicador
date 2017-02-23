@@ -1,5 +1,27 @@
 ﻿<h3>Lançamento Realizado</h3>
-<h4>Indicador: Vendas</h4>
 <div id="lancamentovalores-container">
+    <div class="dx-field">
+        <div class="dx-fieldset" style="float:left;margin-right: 60px">
+            <div class="dx-fieldset-header">
+                <div dx-radio-group="escolhaVisao"></div>
+            </div>
+            <div class="dx-field">
+                <div id="lkIndicadores" dx-lookup="LookupIndicadores"></div>
+                <div id="lkUnidades" dx-lookup="LookupUnidades" style="display:none"></div>
+            </div>
+        </div>
+
+        <div class="dx-fieldset" style="float:left">
+            <div class="dx-fieldset-header">
+                <div id="rgFrequencia" dx-radio-group="escolhafrequencia"></div>
+            </div>
+            <div class="dx-field">
+                <div id="tbArgumento" dx-text-box="tbArgumento" style="float: left;"></div>
+
+                <div dx-button="okButtonOptions"></div>
+            </div>
+        </div>
+    </div>
+    <div style="text-align:center"><h4>Indicador: Vendas - Ano argumento : 2002 </h4></div>
     <div id="gridContainervalores" dx-data-grid="dataGridOptionsValores"></div>
 </div>
