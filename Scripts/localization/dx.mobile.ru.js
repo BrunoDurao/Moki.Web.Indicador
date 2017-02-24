@@ -1,5 +1,5 @@
 /*!
-* DevExtreme (dx.all.ru.js)
+* DevExtreme (dx.mobile.ru.js)
 * Version: 16.2.4
 * Build date: Tue Jan 17 2017
 *
@@ -17,7 +17,7 @@
         factory(DevExpress.localization, DevExpress.errors)
     }
 }(this, function(localization, errors) {
-    errors.log("W0013", "devextreme/dist/js/localization/dx.all.ru.js", "16.2", "Use the 'devextreme/dist/js/localization/dx.messages.ru.js' file instead.");
+    errors.log("W0013", "devextreme/dist/js/localization/dx.mobile.ru.js", "16.2", "Use the 'devextreme/dist/js/localization/dx.messages.ru.js' file instead.");
     localization.loadMessages({
         ru: {
             Yes: "Да",

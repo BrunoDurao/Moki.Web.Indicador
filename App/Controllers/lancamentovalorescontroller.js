@@ -1,5 +1,5 @@
 MokiIndicadoresApp.controller('LancamentoValoresController', function LancamentoValoresController($scope, $http) {
-
+  
     var obterDadosIniciais = function () {
         var request = {};
         request.verbetes = {}; //ObterListaVerbetes();
@@ -22,12 +22,29 @@ MokiIndicadoresApp.controller('LancamentoValoresController', function Lancamento
     };
 
     var init = function () {
+        $scope.zoomLevels = ["month", "year", "decade", "century"];
+        $scope.currentValue = new Date();
+        $scope.calendarDisabled = false;
+        $scope.isMondayFirst = 0;
+        $scope.minDateValue = undefined;
+        $scope.maxDateValue = undefined;
+        $scope.zoomLevel = $scope.zoomLevels[0];
+        $scope.cellTemplate = "cell";
+
         $scope.medida = 'kWh';
         $scope.dados = [];
         $scope.alterados = [];
         $scope.Listaindicador = [];
         obterDadosIniciais();
   
+    };
+
+    $scope.dbConfig = {
+        maxZoomLevel: 'decade',
+        minZoomLevel: 'decade',
+        bindingOptions: {
+            value: 'currentValue'
+        }
     };
 
     var obterValores = function () {
@@ -180,6 +197,7 @@ MokiIndicadoresApp.controller('LancamentoValoresController', function Lancamento
                 $('#lkIndicadores').dxLookup('instance').option('value',undefined);
                 $('#lkUnidades').show();
                 $('#rgFrequencia').dxRadioGroup('instance').option('disabled', false);
+                $scope.escolhaFrequenciaValue = 1;
             }
         },
     };
@@ -192,7 +210,7 @@ MokiIndicadoresApp.controller('LancamentoValoresController', function Lancamento
             dataSource: new DevExpress.data.DataSource({
                 store: $scope.Listaindicador,
                 //key: "ID", 
-                group: "idCategoria"
+                group: "kpiCategorias.Nome"
             }),
             showPopupTitle: false,
             grouped: true,
@@ -203,9 +221,15 @@ MokiIndicadoresApp.controller('LancamentoValoresController', function Lancamento
                 if (tipo == 'object' && e.value != null) {
 
                     $scope.escolhaFrequenciaValue = e.value.idTipoFrequencia;
-                    $scope.medida = e.value.Medida;
+                    
+                    if (e.value.Medida != undefined) {
+                        $scope.medida = e.value.Medida;
+                    }
+                    else {
+                        $scope.medida = "";
+                    }
+
                     $('#rgFrequencia').dxRadioGroup('instance').option('disabled', true);
-                    $('#tbArgumento :input').focus();
                 }
             }
         };
@@ -219,7 +243,7 @@ MokiIndicadoresApp.controller('LancamentoValoresController', function Lancamento
     };
 
     function setEscolhaFrequencia() {
-        $scope.escolhaFrequenciaValue = null;
+        $scope.escolhaFrequenciaValue = 1;
         $scope.escolhafrequencia = {
             dataSource: $scope.ListaFrequencia,
             displayExpr: 'Nome',
@@ -227,30 +251,30 @@ MokiIndicadoresApp.controller('LancamentoValoresController', function Lancamento
             layout: "horizontal",
             onOptionChanged: function (e) {
 
-                var tbArgumento = $('#tbArgumento').dxTextBox('instance');
-
-                switch (e.value) {
-                    case 4:
-                        tbArgumento.option('placeholder', 'Entre com o ano ...');
-                        break;
-                    case 3:
-                        tbArgumento.option('placeholder', 'Entre com o mes ...');
+                switch(e.value) {
+                    case 1:
+                        $('#dbArgumento').dxDateBox('instance').option('maxZoomLevel', 'month');
+                        $('#dbArgumento').dxDateBox('instance').option('minZoomLevel', 'month');
+                        $('#dbArgumento').dxDateBox('instance').option('displayFormat', 'shortDate');
                         break;
                     case 2:
-                        tbArgumento.option('placeholder', 'Entre com a semana ...');
                         break;
-                    case 1:
-                        tbArgumento.option('placeholder', 'Entre com a data ...');
+                    case 3:
+                        $('#dbArgumento').dxDateBox('instance').option('maxZoomLevel', 'year');
+                        $('#dbArgumento').dxDateBox('instance').option('minZoomLevel', 'year');
+                        $('#dbArgumento').dxDateBox('instance').option('displayFormat', 'monthAndYear');
                         break;
-                }
-
-
+                    case 4:
+                        $('#dbArgumento').dxDateBox('instance').option('maxZoomLevel', 'decade');
+                        $('#dbArgumento').dxDateBox('instance').option('minZoomLevel', 'decade');
+                        $('#dbArgumento').dxDateBox('instance').option('displayFormat', 'year');
+                        break;
+                }                
             },
             bindingOptions: { value: 'escolhaFrequenciaValue' }
         };
 
     }
-    $scope.tbArgumento = { maskChar: '', value: "", placeholder: "", showClearButton: true, bindingOptions: { value: 'tbCategoriaValue' } };
 
     $scope.okButtonOptions = {
         text: 'Buscar', type: 'normal', onClick: function (e) {

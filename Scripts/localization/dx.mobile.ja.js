@@ -1,5 +1,5 @@
 /*!
-* DevExtreme (dx.all.ja.js)
+* DevExtreme (dx.mobile.ja.js)
 * Version: 16.2.4
 * Build date: Tue Jan 17 2017
 *
@@ -17,7 +17,7 @@
         factory(DevExpress.localization, DevExpress.errors)
     }
 }(this, function(localization, errors) {
-    errors.log("W0013", "devextreme/dist/js/localization/dx.all.ja.js", "16.2", "Use the 'devextreme/dist/js/localization/dx.messages.ja.js' file instead.");
+    errors.log("W0013", "devextreme/dist/js/localization/dx.mobile.ja.js", "16.2", "Use the 'devextreme/dist/js/localization/dx.messages.ja.js' file instead.");
     localization.loadMessages({
         ja: {
             Yes: "はい",

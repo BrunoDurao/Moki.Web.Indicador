@@ -1,5 +1,6 @@
-﻿Globalize.addCultureInfo("pt", {messages: {
-   Yes: "Sim",
+﻿{"pt":
+    {
+                "Yes": "Sim",
             "No": "Não",
             "Cancel": "Cancelar",
             "Clear": "Limpar",
@@ -201,4 +202,4 @@
             "vizExport-printingButtonText": "Print",
             "vizExport-titleMenuText": "Exporting/Printing",
             "vizExport-exportButtonText": "{0} file"
-}});
+}}
