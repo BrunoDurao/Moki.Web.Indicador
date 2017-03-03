@@ -157,7 +157,6 @@ MokiIndicadoresApp.controller('IndicadorController', function IndicadorControlle
     $scope.tbCategoriaValue;
     $scope.textBox = { tbCategoria: { value: "", placeholder: "Entre com a categoria ...", showClearButton: true, bindingOptions: { value: 'tbCategoriaValue' } } };
 
-
     $scope.okButtonOptions = {
         text: 'Adicionar', type: 'normal', onClick: function (e) {
             var categoria = {};

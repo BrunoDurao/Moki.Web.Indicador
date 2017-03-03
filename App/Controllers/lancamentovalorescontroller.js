@@ -1,5 +1,16 @@
 MokiIndicadoresApp.controller('LancamentoValoresController', function LancamentoValoresController($scope, $http) {
-  
+
+    DevExpress.localization.locale('pt');
+
+    $scope.lookupIndicadoresValue = -1;
+    $scope.lookupUnidadesValue = -1;
+    $scope.escolhaVisaoValue = 'Indicador';
+    $scope.currentValue = undefined;
+    $scope.medida = '';
+    $scope.dados = [];
+    $scope.alterados = [];
+    $scope.Listaindicador = [];
+
     var obterDadosIniciais = function () {
         var request = {};
         request.verbetes = {}; //ObterListaVerbetes();
@@ -22,29 +33,13 @@ MokiIndicadoresApp.controller('LancamentoValoresController', function Lancamento
     };
 
     var init = function () {
-        $scope.zoomLevels = ["month", "year", "decade", "century"];
-        $scope.currentValue = new Date();
-        $scope.calendarDisabled = false;
-        $scope.isMondayFirst = 0;
-        $scope.minDateValue = undefined;
-        $scope.maxDateValue = undefined;
-        $scope.zoomLevel = $scope.zoomLevels[0];
-        $scope.cellTemplate = "cell";
-
-        $scope.medida = 'kWh';
-        $scope.dados = [];
-        $scope.alterados = [];
-        $scope.Listaindicador = [];
         obterDadosIniciais();
-  
     };
 
     $scope.dbConfig = {
         maxZoomLevel: 'decade',
         minZoomLevel: 'decade',
-        bindingOptions: {
-            value: 'currentValue'
-        }
+        bindingOptions: { value: 'currentValue'}
     };
 
     var obterValores = function () {
@@ -187,6 +182,7 @@ MokiIndicadoresApp.controller('LancamentoValoresController', function Lancamento
         items: ['Indicador', 'Unidade'],
         value: 'Indicador',
         layout: "horizontal",
+        bindingOptions: { value: 'escolhaVisaoValue' },
         onOptionChanged: function (e) {
             if (e.value == 'Indicador') {
                 $('#lkIndicadores').show();
@@ -205,15 +201,13 @@ MokiIndicadoresApp.controller('LancamentoValoresController', function Lancamento
     function setLookupIndicadores() {
         $scope.LookupIndicadores = {
             displayExpr: 'Nome',
-            valueExpr: 'idKpi',
-            //dataSource: $scope.Listaindicador,
             dataSource: new DevExpress.data.DataSource({
                 store: $scope.Listaindicador,
-                //key: "ID", 
                 group: "kpiCategorias.Nome"
             }),
             showPopupTitle: false,
             grouped: true,
+            bindingOptions: { value: 'lookupIndicadoresValue' },
             onOptionChanged: function (e) {
 
                 var tipo = typeof e.value;
@@ -237,10 +231,40 @@ MokiIndicadoresApp.controller('LancamentoValoresController', function Lancamento
 
     $scope.LookupUnidades = {
         displayExpr: 'NomeFantasia',
-        valueExpr: 'idCliente',
         dataSource: $scope.ListaUnidade,
         showPopupTitle: false,
+        bindingOptions: { value: 'lookupUnidadesValue' },
     };
+
+    var obterParametros = function () {
+        
+        var argumento = '';
+        if ($scope.escolhaVisaoValue == 'Indicador') {
+            argumento = "Indicador: " + $scope.lookupIndicadoresValue.Nome;
+        }
+        else {
+            argumento = "Unidade: " + $scope.lookupIndicadoresValue.NomeFantasia;
+        }
+
+        switch ($scope.escolhaFrequenciaValue) {
+            case 1:
+                argumento = argumento + " - Dia: ";
+                argumento = argumento + $scope.currentValue.toDateString();
+                break;
+            case 2:
+                break;
+            case 3:
+                argumento = argumento + " - Mês: ";
+                argumento = argumento + ($scope.currentValue.getMonth() + 1) + "/" + ($scope.currentValue.getFullYear());
+                break;
+            case 4:
+                argumento = argumento + " - Ano: ";
+                argumento = argumento + $scope.currentValue.getFullYear();
+                break;
+        }
+
+       $scope.argumento =  argumento;
+    }    
 
     function setEscolhaFrequencia() {
         $scope.escolhaFrequenciaValue = 1;
@@ -250,7 +274,8 @@ MokiIndicadoresApp.controller('LancamentoValoresController', function Lancamento
             valueExpr: 'idTipoFrequencia',
             layout: "horizontal",
             onOptionChanged: function (e) {
-
+                
+                               
                 switch(e.value) {
                     case 1:
                         $('#dbArgumento').dxDateBox('instance').option('maxZoomLevel', 'month');
@@ -276,13 +301,29 @@ MokiIndicadoresApp.controller('LancamentoValoresController', function Lancamento
 
     }
 
-    $scope.okButtonOptions = {
+    $scope.btBuscar = {
         text: 'Buscar', type: 'normal', onClick: function (e) {
+
+            obterParametros();
             obterValores();
             montarColunas();
             buildDataGrid();
         }
-    }
+    };
+
+    $scope.btback = {
+        text: ' <<  ', type: 'normal', onClick: function (e) {
+            alert('back');
+        }
+    };
+
+    $scope.btforward = {
+        text: '  >>  ', type: 'normal', onClick: function (e) {
+            alert('forward');
+
+        }
+    };
+
 
     function buildDataGrid() {
 

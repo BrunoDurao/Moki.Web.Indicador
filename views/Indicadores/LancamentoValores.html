@@ -17,11 +17,14 @@
             </div>
             <div class="dx-field">
                 <div id="dbArgumento" dx-date-box="dbConfig" style="float: left;width:40%"></div>
-                <div dx-button="okButtonOptions"></div>
+                <div dx-button="btBuscar"></div>
                 
             </div>
         </div>
+            </div>
+    <div class="dx-fieldset">
+        <div dx-button="btback"></div><div dx-button="btforward"></div>
     </div>
-    <div style="text-align:center"><h4>Indicador: Vendas - Ano argumento : 2002 </h4></div>
+    <div style="text-align:center"><h4 id="h4Argument">{{argumento}}</h4></div>
     <div id="gridContainervalores" dx-data-grid="dataGridOptionsValores"></div>
 </div>

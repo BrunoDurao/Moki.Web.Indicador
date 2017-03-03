@@ -72,6 +72,7 @@
     <Content Include="Scripts\angular-resource.min.js.map" />
     <Content Include="Scripts\angular-route.min.js.map" />
     <Content Include="Scripts\angular.min.js.map" />
+    <Content Include="Scripts\devextreme-intl.js" />
     <Content Include="Scripts\dx.all.js" />
     <Content Include="Scripts\globalize.min.js" />
     <Content Include="Scripts\globalize\globalize.min.js" />
@@ -155,6 +156,7 @@
     <Content Include="Scripts\localization\dx.messages.de.js" />
     <Content Include="Scripts\localization\dx.messages.en.js" />
     <Content Include="Scripts\localization\dx.messages.ja.js" />
+    <Content Include="Scripts\localization\dx.messages.pt.js" />
     <Content Include="Scripts\localization\dx.messages.ru.js" />
     <Content Include="Scripts\localization\dx.mobile.de.js" />
     <Content Include="Scripts\localization\dx.mobile.ja.js" />
