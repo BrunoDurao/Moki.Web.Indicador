@@ -12,6 +12,7 @@ MokiIndicadoresApp.controller('IndicadorController', function IndicadorControlle
                $scope.ListaDirecao = response.data.ListaDirecao;
                $scope.ListaFormato = response.data.ListaFormato;
                $scope.Dicionario = getDicionario(response.data.Dicionario);
+               traduzirElementosPagina();
                createCategoriaStore();
                buildDataGrid();
            },
@@ -20,6 +21,10 @@ MokiIndicadoresApp.controller('IndicadorController', function IndicadorControlle
            }
         );
     }
+
+    var traduzirElementosPagina = function () {
+        $scope.titulo = $scope.Dicionario[unescape("Administra%E7%E3o%20Indicadores")];
+    };
 
     var atualizarIndicador = function (evento) {
 
@@ -234,7 +239,7 @@ MokiIndicadoresApp.controller('IndicadorController', function IndicadorControlle
         listaVerbetes.push("idDirecao");
         listaVerbetes.push("Ordem");
         listaVerbetes.push("idTipoMedida");
-        listaVerbetes.push("Administração Indicadores");
+        listaVerbetes.push(unescape("Administra&#231;&#227;o Indicadores"));
 
         return listaVerbetes;
     }

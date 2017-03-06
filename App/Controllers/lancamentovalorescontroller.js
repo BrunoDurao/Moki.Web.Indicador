@@ -14,16 +14,15 @@ MokiIndicadoresApp.controller('LancamentoValoresController', function Lancamento
     var obterDadosIniciais = function () {
         var request = {};
         request.verbetes = {}; //ObterListaVerbetes();
-        $http.post($scope.apiHost + "indicador/obterlistaindicador", request)
+        $http.post($scope.apiHost + "indicador/obterlancamentovalores", request)
         .then(
            function (response) {
                $scope.Listaindicador = response.data.Indicadores;
-               //$scope.ListaCategoria = response.data.ListaCategoria;
                $scope.ListaFrequencia = response.data.ListaFrequencia;
-               //$scope.ListaDirecao = response.data.ListaDirecao;
-               //$scope.ListaFormato = response.data.ListaFormato;
+               $scope.ListaUnidade = response.data.ListaUnidade;
                //$scope.Dicionario = getDicionario(response.data.Dicionario);
                setLookupIndicadores();
+               setLookupUnidades();
                setEscolhaFrequencia();
            },
            function (response) {
@@ -166,17 +165,17 @@ MokiIndicadoresApp.controller('LancamentoValoresController', function Lancamento
         }
     };
 
-    $scope.ListaUnidade = [{ idCliente: 1, NomeFantasia: 'Ipanema' },
-                            { idCliente: 2, NomeFantasia: 'Barra' },
-                            { idCliente: 3, NomeFantasia: 'Botafogo' },
-                            { idCliente: 4, NomeFantasia: 'Bangu' },
-                            { idCliente: 5, NomeFantasia: 'Santa Cruz' },
-                            { idCliente: 6, NomeFantasia: 'Centro' },
-                            { idCliente: 7, NomeFantasia: 'Leblon' },
-                            { idCliente: 8, NomeFantasia: 'Copacabana' },
-                            { idCliente: 9, NomeFantasia: 'Recreio' },
-                            { idCliente: 10, NomeFantasia: 'Campo Grande' },
-                            { idCliente: 11, NomeFantasia: 'Tijuca' }];
+    //$scope.ListaUnidade = [{ idCliente: 1, NomeFantasia: 'Ipanema' },
+    //                        { idCliente: 2, NomeFantasia: 'Barra' },
+    //                        { idCliente: 3, NomeFantasia: 'Botafogo' },
+    //                        { idCliente: 4, NomeFantasia: 'Bangu' },
+    //                        { idCliente: 5, NomeFantasia: 'Santa Cruz' },
+    //                        { idCliente: 6, NomeFantasia: 'Centro' },
+    //                        { idCliente: 7, NomeFantasia: 'Leblon' },
+    //                        { idCliente: 8, NomeFantasia: 'Copacabana' },
+    //                        { idCliente: 9, NomeFantasia: 'Recreio' },
+    //                        { idCliente: 10, NomeFantasia: 'Campo Grande' },
+    //                        { idCliente: 11, NomeFantasia: 'Tijuca' }];
 
     $scope.escolhaVisao = {
         items: ['Indicador', 'Unidade'],
@@ -229,12 +228,14 @@ MokiIndicadoresApp.controller('LancamentoValoresController', function Lancamento
         };
     }
 
-    $scope.LookupUnidades = {
-        displayExpr: 'NomeFantasia',
-        dataSource: $scope.ListaUnidade,
-        showPopupTitle: false,
-        bindingOptions: { value: 'lookupUnidadesValue' },
-    };
+    function setLookupUnidades() {
+        $scope.LookupUnidades = {
+            displayExpr: 'NomeFantasia',
+            dataSource: $scope.ListaUnidade,
+            showPopupTitle: false,
+            bindingOptions: { value: 'lookupUnidadesValue' },
+        };
+    }
 
     var obterParametros = function () {
         
