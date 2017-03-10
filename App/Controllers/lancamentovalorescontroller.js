@@ -26,7 +26,29 @@ MokiIndicadoresApp.controller('LancamentoValoresController', function Lancamento
                setEscolhaFrequencia();
            },
            function (response) {
-               DevExpress.ui.notify("Sistema com erro favor contactar suporte", "error", 200);
+               DevExpress.ui.notify("Sistema com erro favor contactar suporte", "error",  $scope.messageDelay);
+           }
+        );
+    };
+
+    var obterResultados = function () {
+
+          var request = $scope.parametros;
+
+        $http.post($scope.apiHost + "indicador/obterlistaresultado", request)
+        .then(
+           function (response) {
+
+               $scope.ListaResultado = response.data.ListaResultado;
+               var transformado = transformar($scope.ListaResultado);
+               $scope.dadosgrid = transformado.slice(0, transformado.lenght);
+               montarColunas();
+               $('#gridContainervalores').dxDataGrid('instance').option("columns", $scope.colunas);
+               $('#gridContainervalores').dxDataGrid('instance').option("dataSource", $scope.dadosgrid);
+           },
+           function (response) {
+
+               DevExpress.ui.notify("Sistema com erro favor contactar suporte", "error",  $scope.messageDelay);
            }
         );
     };
@@ -41,75 +63,6 @@ MokiIndicadoresApp.controller('LancamentoValoresController', function Lancamento
         bindingOptions: { value: 'currentValue'}
     };
 
-    var obterValores = function () {
-        $scope.dados.push({ id: 1, unidade: 'Ipanema', ano: 2000, valor: 500.00 });
-        $scope.dados.push({ id: 2, unidade: 'Ipanema', ano: 2001, valor: 600.00 });
-        $scope.dados.push({ id: 3, unidade: 'Ipanema', ano: 2002, valor: 700.00 });
-        $scope.dados.push({ id: 4, unidade: 'Ipanema', ano: 2003, valor: 800.00 });
-        $scope.dados.push({ id: 5, unidade: 'Ipanema', ano: 2004, valor: 900.00 });
-        $scope.dados.push({ id: 6, unidade: 'Barra', ano: 2000, valor: 550.00 });
-        $scope.dados.push({ id: 7, unidade: 'Barra', ano: 2001, valor: 650.00 });
-        $scope.dados.push({ id: 8, unidade: 'Barra', ano: 2002, valor: 750.00 });
-        $scope.dados.push({ id: 9, unidade: 'Barra', ano: 2003, valor: 850.00 });
-        $scope.dados.push({ id: 10, unidade: 'Barra', ano: 2004, valor: 950.00 });
-        $scope.dados.push({ id: 11, unidade: 'Botafogo', ano: 2000, valor: 590.00 });
-        $scope.dados.push({ id: 12, unidade: 'Botafogo', ano: 2001, valor: 690.00 });
-        $scope.dados.push({ id: 13, unidade: 'Botafogo', ano: 2002, valor: 790.00 });
-        $scope.dados.push({ id: 14, unidade: 'Botafogo', ano: 2003, valor: 890.00 });
-        $scope.dados.push({ id: 15, unidade: 'Botafogo', ano: 2004, valor: 990.00 });
-        $scope.dados.push({ id: 16, unidade: 'Bangu', ano: 2000, valor: 0 });
-        $scope.dados.push({ id: 17, unidade: 'Bangu', ano: 2001, valor: 0 });
-        $scope.dados.push({ id: 18, unidade: 'Bangu', ano: 2002, valor: 0 });
-        $scope.dados.push({ id: 19, unidade: 'Bangu', ano: 2003, valor: 0 });
-        $scope.dados.push({ id: 20, unidade: 'Bangu', ano: 2004, valor: 0 });
-        $scope.dados.push({ id: 21, unidade: 'Santa Cruz', ano: 2000, valor: 560.00 });
-        $scope.dados.push({ id: 22, unidade: 'Santa Cruz', ano: 2001, valor: 660.00 });
-        $scope.dados.push({ id: 23, unidade: 'Santa Cruz', ano: 2002, valor: 760.00 });
-        $scope.dados.push({ id: 24, unidade: 'Santa Cruz', ano: 2003, valor: 860.00 });
-        $scope.dados.push({ id: 25, unidade: 'Santa Cruz', ano: 2004, valor: 960.00 });
-        $scope.dados.push({ id: 26, unidade: 'Flamengo', ano: 2000, valor: 540.00 });
-        $scope.dados.push({ id: 27, unidade: 'Flamengo', ano: 2001, valor: 640.00 });
-        $scope.dados.push({ id: 28, unidade: 'Flamengo', ano: 2002, valor: 740.00 });
-        $scope.dados.push({ id: 29, unidade: 'Flamengo', ano: 2003, valor: 840.00 });
-        $scope.dados.push({ id: 30, unidade: 'Flamengo', ano: 2004, valor: 940.00 });
-        $scope.dados.push({ id: 31, unidade: 'Centro', ano: 2000, valor: 530.00 });
-        $scope.dados.push({ id: 32, unidade: 'Centro', ano: 2001, valor: 630.00 });
-        $scope.dados.push({ id: 33, unidade: 'Centro', ano: 2002, valor: 730.00 });
-        $scope.dados.push({ id: 34, unidade: 'Centro', ano: 2003, valor: 830.00 });
-        $scope.dados.push({ id: 35, unidade: 'Centro', ano: 2004, valor: 930.00 });
-        $scope.dados.push({ id: 36, unidade: 'Leblon', ano: 2000, valor: 510.00 });
-        $scope.dados.push({ id: 37, unidade: 'Leblon', ano: 2001, valor: 610.00 });
-        $scope.dados.push({ id: 38, unidade: 'Leblon', ano: 2002, valor: 710.00 });
-        $scope.dados.push({ id: 39, unidade: 'Leblon', ano: 2003, valor: 810.00 });
-        $scope.dados.push({ id: 40, unidade: 'Leblon', ano: 2004, valor: 910.00 });
-        $scope.dados.push({ id: 41, unidade: 'Copacabana', ano: 2000, valor: 520.00 });
-        $scope.dados.push({ id: 42, unidade: 'Copacabana', ano: 2001, valor: 620.00 });
-        $scope.dados.push({ id: 43, unidade: 'Copacabana', ano: 2002, valor: 720.00 });
-        $scope.dados.push({ id: 44, unidade: 'Copacabana', ano: 2003, valor: 820.00 });
-        $scope.dados.push({ id: 45, unidade: 'Copacabana', ano: 2004, valor: 920.00 });
-        $scope.dados.push({ id: 46, unidade: 'Recreio', ano: 2000, valor: 520.00 });
-        $scope.dados.push({ id: 47, unidade: 'Recreio', ano: 2001, valor: 620.00 });
-        $scope.dados.push({ id: 48, unidade: 'Recreio', ano: 2002, valor: 720.00 });
-        $scope.dados.push({ id: 49, unidade: 'Recreio', ano: 2003, valor: 820.00 });
-        $scope.dados.push({ id: 50, unidade: 'Recreio', ano: 2004, valor: 920.00 });
-        $scope.dados.push({ id: 51, unidade: 'Campo Grande', ano: 2000, valor: 525.00 });
-        $scope.dados.push({ id: 52, unidade: 'Campo Grande', ano: 2001, valor: 625.00 });
-        $scope.dados.push({ id: 53, unidade: 'Campo Grande', ano: 2002, valor: 725.00 });
-        $scope.dados.push({ id: 54, unidade: 'Campo Grande', ano: 2003, valor: 825.00 });
-        $scope.dados.push({ id: 55, unidade: 'Campo Grande', ano: 2004, valor: 925.00 });
-        $scope.dados.push({ id: 56, unidade: 'Tijuca', ano: 2000, valor: 1525.00 });
-        $scope.dados.push({ id: 57, unidade: 'Tijuca', ano: 2001, valor: 1625.00 });
-        $scope.dados.push({ id: 58, unidade: 'Tijuca', ano: 2002, valor: 1725.00 });
-        $scope.dados.push({ id: 59, unidade: 'Tijuca', ano: 2003, valor: 1825.00 });
-        $scope.dados.push({ id: 60, unidade: 'Tijuca', ano: 2004, valor: 1925.00 });
-
-
-
-        transformar($scope.dados);
-        var transformado = transformar($scope.dados);
-        $scope.dadosgrid = transformado.slice(0, transformado.lenght);
-    }
-
     var transformar = function (dados) {
 
         transformado = [];
@@ -119,10 +72,26 @@ MokiIndicadoresApp.controller('LancamentoValoresController', function Lancamento
 
         while (x < dados.length) {
             transformado[i] = {};
-            transformado[i].unidade = dados[x].unidade;
+            transformado[i].unidade = dados[x].NomeFantasia;
 
-            while (transformado[i].unidade == dados[x].unidade) {
-                transformado[i][dados[x].ano] = dados[x].valor;
+            while (transformado[i].unidade == dados[x].NomeFantasia) {
+
+
+                if ($scope.escolhaFrequenciaValue.idTipoFrequencia == 4) {
+                    var ano = dados[x].dtReferencia.substr(0, 4);
+                }
+
+                if ($scope.escolhaFrequenciaValue.idTipoFrequencia == 3) {
+                    var ano = dados[x].dtReferencia.substr(0, 7);
+                }
+
+                if ($scope.escolhaFrequenciaValue.idTipoFrequencia == 1) {
+                    var ano = dados[x].dtReferencia.substr(0, 10);
+                }
+
+                transformado[i][ano] = dados[x].Valor;
+
+        
                 x++;
 
                 if (x >= dados.length)
@@ -147,35 +116,26 @@ MokiIndicadoresApp.controller('LancamentoValoresController', function Lancamento
                     coluna.format = 'decimal fixedPoint';
                     coluna.precision = '2';
                     coluna.customizeText = function (options) {
-                        if (options.value !== 0) {
-                            if ($scope.medida == 'R$') {
-                                return 'R$ ' + options.valueText;
-                            } else {
-                                return options.valueText + ' ' + $scope.medida;
-                            }
-                        }
+                        //if (options.value !== 0) {
+                            //if ($scope.medida == 'R$') {
+                            //    return 'R$ ' + options.valueText;
+                            //} else {
+                            //    return options.valueText + ' ' + $scope.medida;
+                            //}
+                        //}
+                        return options.valueText;
                     };
 
                     $scope.colunas.push(coluna);
                 } else {
                     coluna.allowEditing = false;
+                    if ($scope.escolhaVisaoValue == 'Unidade')
+                        coluna.caption = 'Indicador';
                     $scope.colunas.unshift(coluna);
                 }
             }
         }
     };
-
-    //$scope.ListaUnidade = [{ idCliente: 1, NomeFantasia: 'Ipanema' },
-    //                        { idCliente: 2, NomeFantasia: 'Barra' },
-    //                        { idCliente: 3, NomeFantasia: 'Botafogo' },
-    //                        { idCliente: 4, NomeFantasia: 'Bangu' },
-    //                        { idCliente: 5, NomeFantasia: 'Santa Cruz' },
-    //                        { idCliente: 6, NomeFantasia: 'Centro' },
-    //                        { idCliente: 7, NomeFantasia: 'Leblon' },
-    //                        { idCliente: 8, NomeFantasia: 'Copacabana' },
-    //                        { idCliente: 9, NomeFantasia: 'Recreio' },
-    //                        { idCliente: 10, NomeFantasia: 'Campo Grande' },
-    //                        { idCliente: 11, NomeFantasia: 'Tijuca' }];
 
     $scope.escolhaVisao = {
         items: ['Indicador', 'Unidade'],
@@ -192,7 +152,7 @@ MokiIndicadoresApp.controller('LancamentoValoresController', function Lancamento
                 $('#lkIndicadores').dxLookup('instance').option('value',undefined);
                 $('#lkUnidades').show();
                 $('#rgFrequencia').dxRadioGroup('instance').option('disabled', false);
-                $scope.escolhaFrequenciaValue = 1;
+                $scope.escolhaFrequenciaValue = {idFrequencia: 1, Nome: 'Mensal'};
             }
         },
     };
@@ -213,7 +173,11 @@ MokiIndicadoresApp.controller('LancamentoValoresController', function Lancamento
 
                 if (tipo == 'object' && e.value != null) {
 
-                    $scope.escolhaFrequenciaValue = e.value.idTipoFrequencia;
+                    var frequencia = $scope.ListaFrequencia.filter(function (obj) {
+                        return obj.idTipoFrequencia == e.value.idTipoFrequencia;
+                    });
+
+                    $scope.escolhaFrequenciaValue = frequencia[0];
                     
                     if (e.value.Medida != undefined) {
                         $scope.medida = e.value.Medida;
@@ -238,6 +202,16 @@ MokiIndicadoresApp.controller('LancamentoValoresController', function Lancamento
     }
 
     var obterParametros = function () {
+
+        $scope.parametros = {
+            tipoBusca: $scope.escolhaVisaoValue,
+            Id: ($scope.escolhaVisaoValue == "Indicador") ? $scope.lookupIndicadoresValue.idKpi : $scope.lookupUnidadesValue.idUnidade,
+            Data: $scope.currentValue,
+            Frequencia: $scope.escolhaFrequenciaValue
+        }
+    };
+
+    var obterParametrosTexto = function () {
         
         var argumento = '';
         if ($scope.escolhaVisaoValue == 'Indicador') {
@@ -265,111 +239,132 @@ MokiIndicadoresApp.controller('LancamentoValoresController', function Lancamento
         }
 
        $scope.argumento =  argumento;
-    }    
+    }
 
     function setEscolhaFrequencia() {
         $scope.escolhaFrequenciaValue = 1;
         $scope.escolhafrequencia = {
             dataSource: $scope.ListaFrequencia,
             displayExpr: 'Nome',
-            valueExpr: 'idTipoFrequencia',
+            //valueExpr: 'idTipoFrequencia',
             layout: "horizontal",
+            bindingOptions: { value: 'escolhaFrequenciaValue' },
             onOptionChanged: function (e) {
-                
                                
-                switch(e.value) {
-                    case 1:
-                        $('#dbArgumento').dxDateBox('instance').option('maxZoomLevel', 'month');
-                        $('#dbArgumento').dxDateBox('instance').option('minZoomLevel', 'month');
-                        $('#dbArgumento').dxDateBox('instance').option('displayFormat', 'shortDate');
-                        break;
-                    case 2:
-                        break;
-                    case 3:
-                        $('#dbArgumento').dxDateBox('instance').option('maxZoomLevel', 'year');
-                        $('#dbArgumento').dxDateBox('instance').option('minZoomLevel', 'year');
-                        $('#dbArgumento').dxDateBox('instance').option('displayFormat', 'monthAndYear');
-                        break;
-                    case 4:
-                        $('#dbArgumento').dxDateBox('instance').option('maxZoomLevel', 'decade');
-                        $('#dbArgumento').dxDateBox('instance').option('minZoomLevel', 'decade');
-                        $('#dbArgumento').dxDateBox('instance').option('displayFormat', 'year');
-                        break;
-                }                
-            },
-            bindingOptions: { value: 'escolhaFrequenciaValue' }
+                if (e.value != undefined) {
+                    switch (e.value.idTipoFrequencia) {
+                        case 1:
+                            $('#dbArgumento').dxDateBox('instance').option('maxZoomLevel', 'month');
+                            $('#dbArgumento').dxDateBox('instance').option('minZoomLevel', 'month');
+                            $('#dbArgumento').dxDateBox('instance').option('displayFormat', 'shortDate');
+                            break;
+                        case 2:
+                            break;
+                        case 3:
+                            $('#dbArgumento').dxDateBox('instance').option('maxZoomLevel', 'year');
+                            $('#dbArgumento').dxDateBox('instance').option('minZoomLevel', 'year');
+                            $('#dbArgumento').dxDateBox('instance').option('displayFormat', 'monthAndYear');
+                            break;
+                        case 4:
+                            $('#dbArgumento').dxDateBox('instance').option('maxZoomLevel', 'decade');
+                            $('#dbArgumento').dxDateBox('instance').option('minZoomLevel', 'decade');
+                            $('#dbArgumento').dxDateBox('instance').option('displayFormat', 'year');
+                            break;
+                    }                
+                }
+            }
         };
 
     }
 
     $scope.btBuscar = {
         text: 'Buscar', type: 'normal', onClick: function (e) {
-
             obterParametros();
-            obterValores();
-            montarColunas();
-            buildDataGrid();
+            obterResultados();
         }
     };
 
     $scope.btback = {
         text: ' <<  ', type: 'normal', onClick: function (e) {
-            alert('back');
+            navegar('back');
         }
     };
 
     $scope.btforward = {
         text: '  >>  ', type: 'normal', onClick: function (e) {
-            alert('forward');
+            navegar('forward');
 
         }
     };
 
+    var navegar = function (direcao) {
+        var year = $scope.currentValue.getFullYear();
+        var month = $scope.currentValue.getMonth();
+        var day = $scope.currentValue.getDate();
+        var i = 1;
 
-    function buildDataGrid() {
+        if (direcao == 'back') {
+            i = -1;
+        }
+      
+        switch ($scope.escolhaFrequenciaValue.idTipoFrequencia) {
+            case 1:
+                day = day + i;
+                break;
+            case 2:
+                break;
+            case 3:
+                month = month + i;
+                break;
+            case 4:
+                year = year + i;
+                break;
+        }
 
-        $scope.dataGridOptionsValores = {
-            dataSource: $scope.dadosgrid,
-            noDataText: "dasdasdasdasd",
-            paging: {
-                enabled: false,
-            },
-            rowAlternationEnabled: true,
-            allowColumnReordering: true,
-            showBorders: true,
-            showRowLines: true,
-            columnAutoWidth: true,
-            editing: {
-                mode: "batch",
-                allowUpdating: true,
-                allowDeleting: false,
-                allowAdding: false,
-            },
-            columns: $scope.colunas,
-            onEditingStart: function (e) {
+        $scope.currentValue = new Date(year, month, day);
+        $scope.parametros.Data = $scope.currentValue;
+        obterResultados();
+    };
+    
+    $scope.dataGridOptionsValores = {
+        dataSource: $scope.dadosgrid,
+        noDataText: " ",
+        paging: {
+            enabled: false,
+        },
+        rowAlternationEnabled: true,
+        allowColumnReordering: true,
+        showBorders: true,
+        showRowLines: true,
+        columnAutoWidth: true,
+        editing: {
+            mode: "batch",
+            allowUpdating: true,
+            allowDeleting: false,
+            allowAdding: false,
+        },
+        columns: $scope.colunas,
+        onEditingStart: function (e) {
 
-            },
-            onRowUpdating: function (e) {
-                var data = {};
-                $.extend(data, e.oldData, e.newData);
-                $scope.alterados.push(data);
-            },
-            onRowUpdated: function (e) {
+        },
+        onRowUpdating: function (e) {
+            var data = {};
+            $.extend(data, e.oldData, e.newData);
+            $scope.alterados.push(data);
+        },
+        onRowUpdated: function (e) {
 
-            },
-            onContentReady: function (e) {
+        },
+        onContentReady: function (e) {
 
-                if (e.component.hasEditData() == false && $scope.alterados.length > 0) {
-                    console.log("alterar");
-                    save();
-                    $scope.alterados = [];
-                }
-            },
-        };
-
-
-    }
-
+            if (e.component.hasEditData() == false && $scope.alterados.length > 0) {
+                console.log("alterar");
+                save();
+                $scope.alterados = [];
+            }
+        },
+    };
+    
     var save = function () {
 
         var salvar = [];
@@ -385,21 +380,55 @@ MokiIndicadoresApp.controller('LancamentoValoresController', function Lancamento
                     if (property != 'unidade') {
                         kpivalor.ano = property;
                         kpivalor.valor = $scope.alterados[i][property];
+
+                        switch (kpivalor.ano.length) {
+                            case 4:
+                                kpivalor.ano = kpivalor.ano + '01-01T00:00:00Z';
+                                break;
+                            case 7:
+                                kpivalor.ano = kpivalor.ano + '-01T00:00:00Z';
+                                break;
+                            case 10:
+                                kpivalor.ano = kpivalor.ano + 'T00:00:00Z';
+                                break;
+                        }
+
+                        var result = $scope.ListaResultado.filter(function (obj) {
+                            return obj.NomeFantasia == kpivalor.unidade && obj.dtReferencia == kpivalor.ano;
+                        });
+
+                        result[0].Valor = kpivalor.valor;
+
+                        salvar.push(result[0]);
+
                     }
                 }
             }
 
-            var result = $scope.dados.filter(function (obj) {
-                return obj.unidade == kpivalor.unidade && obj.ano == kpivalor.ano;
-            });
-
-            kpivalor.id = result[0].id;
-
-            salvar.push(kpivalor);
         }
 
-        console.log(salvar)
+        console.log(salvar);
+        salvarResultados(salvar);
 
+    };
+
+    var salvarResultados = function (resultados) {
+
+        var request = {};
+        request.ListaResultado = resultados;
+
+        $http.post($scope.apiHost + "indicador/salvarlistaresultado", request)
+        .then(
+           function (response) {
+
+               DevExpress.ui.notify("Resultados salvos com sucesso", "success", $scope.messageDelay);
+              
+           },
+           function (response) {
+
+               DevExpress.ui.notify("Sistema com erro favor contactar suporte", "error", $scope.messageDelay);
+           }
+        );
     };
 
     init();

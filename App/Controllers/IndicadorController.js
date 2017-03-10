@@ -17,7 +17,7 @@ MokiIndicadoresApp.controller('IndicadorController', function IndicadorControlle
                buildDataGrid();
            },
            function (response) {
-               DevExpress.ui.notify("Sistema com erro favor contactar suporte", "error", 200);
+               DevExpress.ui.notify("Sistema com erro favor contactar suporte", "error",  $scope.messageDelay);
            }
         );
     }
@@ -109,7 +109,7 @@ MokiIndicadoresApp.controller('IndicadorController', function IndicadorControlle
                pendencia.resolve();
            },
            function (response) {
-               DevExpress.ui.notify("Sistema com erro favor contactar suporte", "error", 200);
+               DevExpress.ui.notify("Sistema com erro favor contactar suporte", "error",  $scope.messageDelay);
                pendencia.resolve();
            }
         );
