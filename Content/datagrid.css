@@ -1,0 +1,13 @@
+﻿.dx-datagrid-headers .dx-datagrid-table .dx-row > td {
+    border-bottom: 1px solid #ddd;
+    color: #FFFFFF !important;
+    font-family: 'Ubuntu', sans-serif;
+    font-size: 12px;
+    font-weight: bold;
+    background-color: #1F3968 !important;
+}
+
+.dx-datagrid-rowsview .dx-row:nth-child(odd) 
+{
+        background-color: #EAEEEC;
+}

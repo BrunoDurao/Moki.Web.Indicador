@@ -1,4 +1,4 @@
-MokiIndicadoresApp.controller('LancamentoValoresController', function LancamentoValoresController($scope, $http) {
+MokiIndicadoresApp.controller('LancamentoMetasController', function LancamentoMetasController($scope, $http) {
 
     DevExpress.localization.locale('pt');
 
@@ -35,11 +35,11 @@ MokiIndicadoresApp.controller('LancamentoValoresController', function Lancamento
 
           var request = $scope.parametros;
 
-        $http.post($scope.apiHost + "indicador/obterlistaresultado", request)
+        $http.post($scope.apiHost + "indicador/obterlistameta", request)
         .then(
            function (response) {
 
-               $scope.ListaResultado = response.data.ListaResultado;
+               $scope.ListaResultado = response.data.ListaMeta;
                var transformado = transformar($scope.ListaResultado);
                $scope.dadosgrid = transformado.slice(0, transformado.lenght);
                montarColunas();
@@ -147,7 +147,7 @@ MokiIndicadoresApp.controller('LancamentoValoresController', function Lancamento
 
         switch ($scope.escolhaFrequenciaValue.idTipoFrequencia) {
             case 1:
-                header[0].innerText = info.column.caption.substr(8, 2) + '-' + info.column.caption.substr(5, 2) + '-' + info.column.caption.substr(0, 4);
+                header[0].innerText = info.column.caption.substr(8,2) + '-'  + info.column.caption.substr(5,2) + '-' + info.column.caption.substr(0,4);
                 break;
             case 2:
                 break;
@@ -465,13 +465,13 @@ MokiIndicadoresApp.controller('LancamentoValoresController', function Lancamento
     var salvarResultados = function (resultados) {
 
         var request = {};
-        request.ListaResultado = resultados;
+        request.ListaMeta = resultados;
 
-        $http.post($scope.apiHost + "indicador/salvarlistaresultado", request)
+        $http.post($scope.apiHost + "indicador/salvarlistameta", request)
         .then(
            function (response) {
-               atualizarBase(response.data.ListaResultado)
-               DevExpress.ui.notify("Resultados salvos com sucesso", "success", $scope.messageDelay);
+               atualizarBase(response.data.ListaMeta)
+               DevExpress.ui.notify("Metas salvas com sucesso", "success", $scope.messageDelay);
               
            },
            function (response) {
@@ -489,7 +489,7 @@ MokiIndicadoresApp.controller('LancamentoValoresController', function Lancamento
                 return obj.idKpi == baseAtualizada[i].idKpi && obj.idUnidade == baseAtualizada[i].idUnidade && obj.dtReferencia == baseAtualizada[i].dtReferencia
             });
 
-            indicador[0].idResultado = baseAtualizada[i].idResultado;
+            indicador[0].idMeta = baseAtualizada[i].idMeta;
         }
     }
 
