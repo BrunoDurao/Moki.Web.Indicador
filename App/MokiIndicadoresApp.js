@@ -25,6 +25,10 @@ MokiIndicadoresApp.config(function ($routeProvider) {
             templateUrl: '/views/indicadores/LancamentoMetas.html',
             controller: 'LancamentoMetasController'
         })
+        .when('/graficos', {
+            templateUrl: '/views/indicadores/graficos.html',
+            controller: 'GraficosController'
+        })
 });
 
 
