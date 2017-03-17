@@ -175,10 +175,12 @@ MokiIndicadoresApp.controller('LancamentoValoresController', function Lancamento
                 $('#lkIndicadores').dxLookup('instance').option('value',undefined);
                 $('#lkUnidades').show();
 
-                var frequencia = $scope.ListaFrequencia.filter(function (obj) {
-                    return obj.idTipoFrequencia == 1;
-                });
-                $scope.escolhaFrequenciaValue = frequencia[0];
+                if ($scope.escolhaFrequenciaValue == undefined) {
+                    var frequencia = $scope.ListaFrequencia.filter(function (obj) {
+                        return obj.idTipoFrequencia == 1;
+                    });
+                    $scope.escolhaFrequenciaValue = frequencia[0];
+                }
 
                 $('#rgFrequencia').dxRadioGroup('instance').option('disabled', false);
             }
@@ -217,23 +219,7 @@ MokiIndicadoresApp.controller('LancamentoValoresController', function Lancamento
 
                         $('#rgFrequencia').dxRadioGroup('instance').option('disabled', true);
 
-                        var hoje = new Date();
-
-                        if ($scope.currentValue == undefined) {
-                            switch ($scope.escolhaFrequenciaValue.idTipoFrequencia) {
-                                case 1:
-                                    $scope.currentValue = hoje;
-                                    break;
-                                case 2:
-                                    break;
-                                case 3:
-                                    $scope.currentValue = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
-                                    break;
-                                case 4:
-                                    $scope.currentValue = new Date(hoje.getFullYear(), 0, 1);
-                                    break;
-                            }
-                        }
+                        configuraDatapadrao();
                         obterParametros();
                         obterResultados();
                     }
@@ -242,12 +228,42 @@ MokiIndicadoresApp.controller('LancamentoValoresController', function Lancamento
         };
     }
 
+    var configuraDatapadrao = function () {
+        var hoje = new Date();
+
+        if ($scope.currentValue == undefined) {
+            switch ($scope.escolhaFrequenciaValue.idTipoFrequencia) {
+                case 1:
+                    $scope.currentValue = hoje;
+                    break;
+                case 2:
+                    break;
+                case 3:
+                    $scope.currentValue = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
+                    break;
+                case 4:
+                    $scope.currentValue = new Date(hoje.getFullYear(), 0, 1);
+                    break;
+            }
+        }
+    };
+
     function setLookupUnidades() {
         $scope.LookupUnidades = {
             displayExpr: 'NomeFantasia',
             dataSource: $scope.ListaUnidade,
             showPopupTitle: false,
             bindingOptions: { value: 'lookupUnidadesValue' },
+            onOptionChanged: function (e) {
+                var tipo = typeof e.value;
+
+                if ((tipo == 'object' && e.value != null && "idUnidade" in e.value && typeof e.previousValue == 'object' && e.previousValue != null)) {
+                    if (e.fullName == "selectedItem" && e.previousValue.idUnidade == e.value.idUnidade) {
+                        obterParametros();
+                        obterResultados();
+                    }
+                }
+            }
         };
     }
 
@@ -378,10 +394,10 @@ MokiIndicadoresApp.controller('LancamentoValoresController', function Lancamento
     
     $scope.dataGridOptionsValores = {
         dataSource: $scope.dadosgrid,
-        noDataText: " ",
         paging: {
-            enabled: false,
+            pageSize: 20
         },
+        noDataText: " ",
         rowAlternationEnabled: true,
         allowColumnReordering: true,
         showBorders: true,

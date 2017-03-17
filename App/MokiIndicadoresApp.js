@@ -29,6 +29,9 @@ MokiIndicadoresApp.config(function ($routeProvider) {
             templateUrl: '/views/indicadores/graficos.html',
             controller: 'GraficosController'
         })
+        .when('/importar', {
+            templateUrl: '/views/indicadores/Importar.html',
+            controller: 'ImportarController'})
 });
 
 
