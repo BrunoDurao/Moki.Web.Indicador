@@ -5,11 +5,12 @@ MokiIndicadoresApp.controller('LancamentoMetasController', function LancamentoMe
     $scope.lookupIndicadoresValue = -1;
     $scope.lookupUnidadesValue = -1;
     $scope.escolhaVisaoValue = 'Indicador';
-    $scope.currentValue = undefined;
     $scope.medida = '';
     $scope.dados = [];
     $scope.alterados = [];
     $scope.ListaIndicador = [];
+    $scope.currentValue = new Date();
+
 
     var obterDadosIniciais = function () {
         var request = {};
@@ -24,6 +25,8 @@ MokiIndicadoresApp.controller('LancamentoMetasController', function LancamentoMe
                setLookupIndicadores();
                setLookupUnidades();
                setEscolhaFrequencia();
+               configuraDatapadrao();
+               configuraFrequenciaPadrao();
            },
            function (response) {
                DevExpress.ui.notify("Sistema com erro favor contactar suporte", "error",  $scope.messageDelay);
@@ -174,14 +177,6 @@ MokiIndicadoresApp.controller('LancamentoMetasController', function LancamentoMe
                 $('#lkIndicadores').hide();
                 $('#lkIndicadores').dxLookup('instance').option('value',undefined);
                 $('#lkUnidades').show();
-
-                if ($scope.escolhaFrequenciaValue == undefined) {
-                    var frequencia = $scope.ListaFrequencia.filter(function (obj) {
-                        return obj.idTipoFrequencia == 1;
-                    });
-                    $scope.escolhaFrequenciaValue = frequencia[0];
-                }
-
                 $('#rgFrequencia').dxRadioGroup('instance').option('disabled', false);
             }
         },
@@ -248,6 +243,15 @@ MokiIndicadoresApp.controller('LancamentoMetasController', function LancamentoMe
         }
     };
 
+    var configuraFrequenciaPadrao = function () {
+        if ($scope.escolhaFrequenciaValue == undefined) {
+            var frequencia = $scope.ListaFrequencia.filter(function (obj) {
+                return obj.idTipoFrequencia == 3;
+            });
+            $scope.escolhaFrequenciaValue = frequencia[0];
+        }
+    }
+
     function setLookupUnidades() {
         $scope.LookupUnidades = {
             displayExpr: 'NomeFantasia',
@@ -308,11 +312,9 @@ MokiIndicadoresApp.controller('LancamentoMetasController', function LancamentoMe
     }
 
     function setEscolhaFrequencia() {
-        $scope.escolhaFrequenciaValue = 1;
         $scope.escolhafrequencia = {
             dataSource: $scope.ListaFrequencia,
             displayExpr: 'Nome',
-            //valueExpr: 'idTipoFrequencia',
             layout: "horizontal",
             bindingOptions: { value: 'escolhaFrequenciaValue' },
             onOptionChanged: function (e) {
@@ -424,7 +426,6 @@ MokiIndicadoresApp.controller('LancamentoMetasController', function LancamentoMe
         onContentReady: function (e) {
 
             if (e.component.hasEditData() == false && $scope.alterados.length > 0) {
-                console.log("alterar");
                 save();
                 $scope.alterados = [];
             }
@@ -473,7 +474,6 @@ MokiIndicadoresApp.controller('LancamentoMetasController', function LancamentoMe
 
         }
 
-        console.log(salvar);
         salvarResultados(salvar);
 
     };
