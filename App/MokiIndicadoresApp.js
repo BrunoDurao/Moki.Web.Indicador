@@ -31,13 +31,52 @@ MokiIndicadoresApp.config(function ($routeProvider) {
         })
         .when('/importar', {
             templateUrl: '/views/indicadores/Importar.html',
-            controller: 'ImportarController'})
+            controller: 'ImportarController'
+        })
+        .when('/filtros', {
+            templateUrl: '/views/indicadores/filtros.html',
+            controller: 'FiltrosController'
+        })
 });
-
 
 MokiIndicadoresApp.controller('mainController', function mainController($scope, $filter, $rootScope) {
     // create a message to display in our view
     $scope.message = 'Minha Home';
     $scope.date = new Date();
     $scope.dateYYYY = $filter('date')(new Date(), 'yyyy');
+});
+
+MokiIndicadoresApp.factory('Filtro', function () {
+
+    var filtro = {
+        Parametros: {
+            Indicador: [],
+            Unidade: [],
+            Frequencia : {},
+            DataInicial: new Date(),
+            DataFinal: new Date(),
+        },
+        Controles: {
+            ListaIndicador: false,
+            ListaUnidade: false,
+            RbFrequencia: false,
+            DatePickerInicial: false,
+            DatePickerFinal: false,
+        }
+    };
+
+    return {
+        getParametros: function () {
+            return filtro.Parametros;
+        },
+        setParametros: function (parametros) {
+            filtro.Parametros = parametros;
+        },
+        getControles: function () {
+            return filtro.Controles;
+        },
+        setControles: function (controles) {
+            filtro.Controles = controles;
+        }
+    };
 });

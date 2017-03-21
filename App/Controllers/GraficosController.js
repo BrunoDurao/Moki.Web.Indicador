@@ -1,35 +1,28 @@
-MokiIndicadoresApp.controller('GraficosController', function GraficosController($scope, $http) {
+MokiIndicadoresApp.controller('GraficosController', function GraficosController($scope, $http, Filtro) {
 
     DevExpress.localization.locale('pt');
-    $scope.lookupIndicadoresValue = -1;
-    $scope.lookupUnidadesValue = -1;
+    $scope.ListaResultado = [];
 
+    Filtro.setControles({
+        ListaIndicador: false,
+        ListaUnidade: false,
+        RbFrequencia: true,
+        DatePickerInicial: true,
+        DatePickerFinal: true,
+        });
 
-    var obterDadosIniciais = function () {
-        var request = {};
-        request.verbetes = {}; //ObterListaVerbetes();
-        $http.post($scope.apiHost + "indicador/obterlancamentovalores", request)
-        .then(
-           function (response) {
-               $scope.ListaIndicador = response.data.Indicadores;
-               $scope.ListaFrequencia = response.data.ListaFrequencia;
-               $scope.ListaUnidade = response.data.ListaUnidade;
-               //$scope.Dicionario = getDicionario(response.data.Dicionario);
-               $('#lkUnidades').dxLookup('instance').option("dataSource", $scope.ListaUnidade);
-               configuraListaIndicadores();
-           },
-           function (response) {
-               DevExpress.ui.notify("Sistema com erro favor contactar suporte", "error", $scope.messageDelay);
-           }
-        );
+    $scope.btBuscar = {
+        text: 'Buscar', type: 'normal', onClick: function (e) {
+            $scope.Filtro = Filtro.getParametros();
+            obterDadosGrafico();
+        }
     };
 
     var obterDadosGrafico = function () {
 
         var request = {};
-
-        request.Unidade = $scope.lookupUnidadesValue;
-        request.Indicador = $scope.lookupIndicadoresValue;
+        request.Unidade = $scope.Filtro.Unidade[0];;
+        request.Indicador = $scope.Filtro.Indicador[0];
         request.Data = new Date();
         request.Quantidade = 6;
 
@@ -40,7 +33,7 @@ MokiIndicadoresApp.controller('GraficosController', function GraficosController(
                formataData();
                $('#chart').dxChart('instance').option("dataSource", $scope.ListaResultado);
                $('#chart').dxChart('instance').option("title", {
-                   text:  $scope.lookupUnidadesValue.NomeFantasia + ' - ' + $scope.lookupIndicadoresValue.Nome,
+                   text: $scope.Filtro.Unidade[0].NomeFantasia + ' - ' + $scope.Filtro.Indicador[0].Nome,
                    subtitle: {
                        text: "(\u00DAltimos 6 meses)"
                    }
@@ -58,34 +51,7 @@ MokiIndicadoresApp.controller('GraficosController', function GraficosController(
             $scope.ListaResultado[i].Data = dataAux.substr(5, 2) + '-' + dataAux.substr(0, 4);
         }
     }
-   
-    function configuraListaIndicadores() {
-        $scope.LookupIndicadores = {
-            displayExpr: 'Nome',
-            dataSource: new DevExpress.data.DataSource({
-                store: $scope.ListaIndicador,
-                group: "kpiCategorias.Nome"
-            }),
-            showPopupTitle: false,
-            grouped: true,
-            bindingOptions: { value: 'lookupIndicadoresValue' },
-        };
-    }
-    
-    $scope.LookupUnidades = {
-        displayExpr: 'NomeFantasia',
-        dataSource: $scope.ListaUnidade,
-        showPopupTitle: false,
-        bindingOptions: { value: 'lookupUnidadesValue' },
-    };
-
-    $scope.btBuscar = {
-        text: 'Buscar', type: 'normal', onClick: function (e) {
-            obterDadosGrafico();
-          }
-    };
-
-
+      
     var types = ["line", "stackedLine", "fullStackedLine"];
 
     $scope.currentType = types[0];
@@ -143,11 +109,5 @@ MokiIndicadoresApp.controller('GraficosController', function GraficosController(
             value: "currentType"
         }
     };
-
-    var init = function () {
-        obterDadosIniciais();
-    };
-
-    init();
-
+   
 });

@@ -11,7 +11,6 @@ MokiIndicadoresApp.controller('LancamentoMetasController', function LancamentoMe
     $scope.ListaIndicador = [];
     $scope.currentValue = new Date();
 
-
     var obterDadosIniciais = function () {
         var request = {};
         request.verbetes = {}; //ObterListaVerbetes();

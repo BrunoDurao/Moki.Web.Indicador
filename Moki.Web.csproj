@@ -57,6 +57,7 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="App\Controllers\FiltrosController.js" />
     <Content Include="App\Controllers\ImportarController.js" />
     <Content Include="App\Controllers\GraficosController.js" />
     <Content Include="App\Controllers\LancamentoMetasController.js" />
@@ -169,6 +170,7 @@
     <None Include="Scripts\localization\dx.web.pt.json" />
     <Content Include="Scripts\localization\dx.web.ru.js" />
     <Content Include="views\home.html" />
+    <Content Include="views\Indicadores\Filtros.html" />
     <Content Include="views\Indicadores\Importar.html" />
     <Content Include="views\Indicadores\Graficos.html" />
     <Content Include="views\Indicadores\LancamentoMetas.html" />

@@ -1,14 +1,24 @@
 ﻿<h3>Gráficos</h3>
-<div class="demo-container" ng-app="DemoApp" >
+<div class="demo-container" >
      
-    Indicadores: <div id="lkIndicadores" dx-lookup="LookupIndicadores" style="width:200px;"></div>
+    <!--Indicadores: <div id="lkIndicadores" dx-lookup="LookupIndicadores" style="width:200px;"></div>
     Unidades: <div id="lkUnidades" dx-lookup="LookupUnidades" style="width:200px;"></div>
-    <div><div dx-button="btBuscar"></div></div>
+    <div><div dx-button="btBuscar"></div></div>-->
 
-    <div id="chart-demo">
-        <div id="chart" dx-chart="chartOptions"></div>
-        <!--<div class="center">
-            <div>Series Type</div>&nbsp;<div dx-select-box="typesOptions"></div>
-        </div>-->
+    <div ng-app="MokiIndicadoresApp" ng-controller="FiltrosController">
+        <div ng-include="'/views/indicadores/filtros.html'"></div>
     </div>
-</div>
+    <div class="dx-field">
+        <div class="dx-field-label"></div>
+        <div class="dx-field-value">
+            <div dx-button="btBuscar"></div>
+        </div>
+    </div>
+
+        <div id="chart-demo">
+            <div id="chart" dx-chart="chartOptions"></div>
+            <!--<div class="center">
+                <div>Series Type</div>&nbsp;<div dx-select-box="typesOptions"></div>
+            </div>-->
+        </div>
+ </div>
