@@ -52,6 +52,14 @@ MokiIndicadoresApp.controller('FiltrosController', function GraficosController($
             displayExpr: 'Nome',
             searchEnabled: true,
             bindingOptions: { value: 'Filtro.Indicador' },
+            onValueChanged: function (e) {
+                var maxItems = $scope.Controles.ListaIndicadorMaxItems;
+                if (e.value.length > maxItems) {
+                    var allPrevValues = e.previousValue;
+                    allPrevValues[maxItems - 1] = e.value[maxItems];
+                    e.component.option('values', allPrevValues);
+                }
+            }
         };
               
         $scope.listaUnidadeConfig = {
@@ -59,6 +67,14 @@ MokiIndicadoresApp.controller('FiltrosController', function GraficosController($
             displayExpr: 'NomeFantasia',
             searchEnabled: true,
             bindingOptions: { value: 'Filtro.Unidade' },
+            onValueChanged: function (e) {
+                var maxItems = $scope.Controles.ListaUnidadeMaxItems;
+                if (e.value.length > maxItems) {
+                    var allPrevValues = e.previousValue;
+                    allPrevValues[maxItems - 1] = e.value[maxItems];
+                    e.component.option('values', allPrevValues);
+                }
+            }
         };
         
         $scope.escolhafrequencia = {

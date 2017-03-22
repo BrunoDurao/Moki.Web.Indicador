@@ -62,6 +62,8 @@ MokiIndicadoresApp.factory('Filtro', function () {
             RbFrequencia: false,
             DatePickerInicial: false,
             DatePickerFinal: false,
+            ListaIndicadorMaxItems: 1000000,
+            ListaUnidadeMaxItems: 1000000,
         }
     };
 

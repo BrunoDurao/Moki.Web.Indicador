@@ -9,7 +9,17 @@ MokiIndicadoresApp.controller('GraficosController', function GraficosController(
         RbFrequencia: true,
         DatePickerInicial: true,
         DatePickerFinal: true,
-        });
+        ListaIndicadorMaxItems: 1,
+        ListaUnidadeMaxItems: 1,
+    });
+
+    Filtro.setParametros({
+        Indicador: [],
+        Unidade: [],
+        Frequencia: {},
+        DataInicial: new Date(),
+        DataFinal: new Date(),
+    });
 
     $scope.btBuscar = {
         text: 'Buscar', type: 'normal', onClick: function (e) {
