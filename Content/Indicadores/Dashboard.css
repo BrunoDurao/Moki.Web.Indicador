@@ -1,0 +1,14 @@
+﻿.Geral {
+    font-family: 'Ubuntu';
+    font-weight: 300;
+    color: #00A3A5;
+    font-size: 120px;
+}
+
+.row {
+    padding: 17px 10px 10px 10px;
+}
+
+.ibox-content {
+    min-height: 436px;
+}

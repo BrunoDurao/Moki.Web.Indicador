@@ -359,6 +359,9 @@ MokiIndicadoresApp.controller('IndicadorController', function IndicadorControlle
                 e.component.expandRow(e.key);
                 var gridUnidade = $(".internal-grid").dxDataGrid("instance");
                 gridUnidade.columnOption("Associado", { allowEditing: true });
+
+                $('.dx-datagrid-group-closed').hide();
+                $('.dx-row').bind('click', function () { return false; });
                 
             },
             onInitNewRow: function (e) {

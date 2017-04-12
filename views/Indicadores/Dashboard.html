@@ -1,0 +1,43 @@
+﻿<link href="./Content/Indicadores/Dashboard.css" rel="stylesheet">
+<div class="Geral">
+    <h3>Gráficos</h3>
+    <div class="demo-container">
+        <div ng-app="MokiIndicadoresApp" ng-controller="FiltrosController">
+            <div ng-include="'/views/indicadores/filtros.html'"></div>
+        </div>
+        <div class="dx-field">
+            <div class="dx-field-label"></div>
+            <div class="dx-field-value">
+                <div dx-button="btBuscar"></div>
+            </div>
+        </div>
+        <div id="painel" style="display:{{painelDisplay}}">
+            <div><h3 ng-bind="titulo" style="text-align:center"></h3></div>
+            <div><h4 ng-bind="subtitulo" style="text-align:center"></h4></div>
+            <div class="row">
+                <div class="">
+                    <div class="col-lg-4">
+                        <div class="ibox-content"><div id="chart1" dx-chart="chartOptions1"></div></div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="ibox-content"><div id="chart2" dx-chart="chartOptions2"></div></div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="ibox-content"><div id="chart3" dx-pie-chart="chartOptions3"></div></div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-4">
+                    <div class="ibox-content"> <div id="chart4" dx-polar-chart="chartOptions4"></div></div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="ibox-content"><div id="chart5" dx-chart="chartOptions5"></div></div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="ibox-content"><div id="chart6" dx-bar-gauge="chartOptions6"></div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div class="Geral">

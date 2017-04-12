@@ -58,6 +58,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="App\Controllers\FiltrosController.js" />
+    <Content Include="App\Controllers\DashboardController.js" />
     <Content Include="App\Controllers\ImportarController.js" />
     <Content Include="App\Controllers\GraficosController.js" />
     <Content Include="App\Controllers\LancamentoMetasController.js" />
@@ -72,6 +73,7 @@
     <Content Include="Content\icons\dxiconsios.eot" />
     <Content Include="Content\icons\dxiconsios.ttf" />
     <Content Include="Content\icons\dxiconsios.woff" />
+    <Content Include="Content\Indicadores\Dashboard.css" />
     <Content Include="Imagens\inicio.png" />
     <Content Include="Scripts\angular-resource.min.js.map" />
     <Content Include="Scripts\angular-route.min.js.map" />
@@ -171,6 +173,7 @@
     <Content Include="Scripts\localization\dx.web.ru.js" />
     <Content Include="views\home.html" />
     <Content Include="views\Indicadores\Filtros.html" />
+    <Content Include="views\Indicadores\Dashboard.html" />
     <Content Include="views\Indicadores\Importar.html" />
     <Content Include="views\Indicadores\Graficos.html" />
     <Content Include="views\Indicadores\LancamentoMetas.html" />

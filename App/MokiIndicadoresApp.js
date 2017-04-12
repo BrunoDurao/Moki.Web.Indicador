@@ -5,6 +5,8 @@ MokiIndicadoresApp.run(function ($rootScope) {
     //$rootScope.apiHost = 'http://webapi.cncorp.com.br/api/';
     $rootScope.messageDelay = 1500;
     $rootScope.httpConfig = { 'Authorization': 'Basic dGVzdDp0ZXN0', 'Content-Type': 'application/x-www-form-urlencoded' };
+    $rootScope.palhetaDefault = ["#00A3A5", "#FF722A", "#574F76", "#BADC58", "#940945", "#EFC961", "#84A93F"];
+    DevExpress.localization.locale('pt');
 });
 
 MokiIndicadoresApp.config(function ($routeProvider) {
@@ -37,6 +39,10 @@ MokiIndicadoresApp.config(function ($routeProvider) {
             templateUrl: '/views/indicadores/filtros.html',
             controller: 'FiltrosController'
         })
+         .when('/dashboard', {
+             templateUrl: '/views/indicadores/dashboard.html',
+             controller: 'DashboardController'
+         })
 });
 
 MokiIndicadoresApp.controller('mainController', function mainController($scope, $filter, $rootScope) {
